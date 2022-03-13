@@ -31,7 +31,7 @@ namespace nhl_data_builder.DataGetter
                     if(game.homeTeam != string.Empty)
                         gameList.Add(game);
                 }
-                // Store next year into database
+                // TODO: Next step, store next year into database
             }
         }
 	}
