@@ -13,6 +13,7 @@ namespace nhl_data_builder.DataGetter
             var message = JsonConvert.DeserializeObject<dynamic>(data);
             if (InvalidGame(message))
                 return new Game();
+            Console.WriteLine(message);
 
             var game = ParseMessageToGame(message);
             return game;

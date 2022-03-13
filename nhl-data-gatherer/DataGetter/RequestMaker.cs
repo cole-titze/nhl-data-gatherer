@@ -23,8 +23,10 @@ namespace nhl_data_builder.DataGetter
 
         public string CreateRequestQuery(int year, int id)
         {
+            string idString = String.Format("{0,0:D4}", id);
+            var yearStr = year.ToString();
             // Build request url
-            string urlParameters = year.ToString() + _seasonType + "000" + id.ToString() + "/feed/live";
+            string urlParameters = $"{yearStr}{_seasonType}{idString}/feed/live";
 
             return urlParameters;
         }
