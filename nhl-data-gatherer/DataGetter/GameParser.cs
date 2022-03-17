@@ -24,7 +24,7 @@ namespace nhl_data_builder.DataGetter
             var awayTeam = message.liveData.boxscore.teams.away.teamStats.teamSkaterStats;
 
             var game = new Game(){
-                Id = (int)message.gamePk,
+                id = (int)message.gamePk,
                 homeGoals = (int)homeTeam.goals,
                 awayGoals = (int)awayTeam.goals,
                 homeTeamName = (string)message.gameData.teams.home.name,
@@ -47,7 +47,7 @@ namespace nhl_data_builder.DataGetter
                 awayGiveaways = (int)awayTeam.giveaways,
                 winner = (int)GetWinner((int)homeTeam.goals, (int)awayTeam.goals),
                 seasonStartYear = GetSeason((string)message.gameData.game.season),
-                date = GetDate((string)message.gameData.datetime.dateTime),
+                gameDate = GetDate((string)message.gameData.datetime.dateTime),
             };
             return game;
         }

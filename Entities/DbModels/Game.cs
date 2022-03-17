@@ -7,11 +7,11 @@ namespace nhl_data_builder.Entities
     }
     public class Game
     {
-        public int Id { get; set; }
+        public int id { get; set; }
         public string homeTeamName { get; set; } = string.Empty;
         public string awayTeamName { get; set; } = string.Empty;
         public int seasonStartYear { get; set; }
-        public DateTime date { get; set; }
+        public DateTime gameDate { get; set; }
         public int homeGoals { get; set; }
         public int awayGoals { get; set; }
         public int winner { get; set; }
