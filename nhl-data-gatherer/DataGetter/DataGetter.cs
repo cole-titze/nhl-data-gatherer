@@ -27,9 +27,11 @@ namespace nhl_data_builder.DataGetter
                     var response = await RequestMaker.MakeRequest(query);
 
                     if (response.IsSuccessStatusCode)
+                    {
                         game = await GameParser.BuildGame(response);
-                    if(game.homeTeam != string.Empty)
-                        gameList.Add(game);
+                        if(game.homeTeamName != string.Empty)
+                            gameList.Add(game);
+                    }
                 }
                 // TODO: Next step, store next year into database
             }
