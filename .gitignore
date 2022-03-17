@@ -457,3 +457,5 @@ $RECYCLE.BIN/
 
 *.dll
 *.pdb
+
+appsettings.Development.json

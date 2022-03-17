@@ -1,7 +1,7 @@
 CREATE TABLE Game (
     id INT NOT NULL,
-    homeTeamName VARCHAR NOT NULL,
-    awayTeamName VARCHAR NOT NULL,
+    homeTeamName VARCHAR(MAX) NOT NULL,
+    awayTeamName VARCHAR(MAX) NOT NULL,
     seasonStartYear INT NOT NULL,
     gameDate DATETIME2 NOT NULL,
     homeGoals INT NOT NULL,
