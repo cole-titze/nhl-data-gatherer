@@ -18,7 +18,7 @@ namespace nhl_data_gatherer.DataAccess
 
 			using (SqlConnection con = new SqlConnection(_connectionString))
 			{
-				SqlCommand cmd = new SqlCommand("GET_ALL_Games", con);
+				SqlCommand cmd = new SqlCommand("GetGames", con);
 				cmd.CommandType = CommandType.StoredProcedure;
 				con.Open();
 				SqlDataReader rdr = cmd.ExecuteReader();
@@ -54,6 +54,45 @@ namespace nhl_data_gatherer.DataAccess
 				}
 			}
 			return games;
+		}
+		public void AddGames(List<Game> games)
+		{
+			using (SqlConnection con = new SqlConnection(_connectionString))
+			{
+				SqlCommand cmd = new SqlCommand("InsertGame", con);
+				cmd.CommandType = CommandType.StoredProcedure;
+				con.Open();
+				foreach(var game in games)
+				{
+					cmd.Parameters.AddWithValue("@id",game.id.ToString());
+					cmd.Parameters.AddWithValue("@homeTeamName",game.homeTeamName);
+					cmd.Parameters.AddWithValue("@awayTeamName",game.awayTeamName);
+					cmd.Parameters.AddWithValue("@seasonStartYear",game.seasonStartYear.ToString());
+					cmd.Parameters.AddWithValue("@gameDate",game.gameDate.ToString());
+					cmd.Parameters.AddWithValue("@homeGoals",game.homeGoals.ToString());
+					cmd.Parameters.AddWithValue("@awayGoals",game.awayGoals.ToString());
+					cmd.Parameters.AddWithValue("@winner",game.winner.ToString());
+					cmd.Parameters.AddWithValue("@homeSOG",game.homeSOG.ToString());
+					cmd.Parameters.AddWithValue("@awaySOG",game.awaySOG.ToString());
+					cmd.Parameters.AddWithValue("@homePPG",game.homePPG.ToString());
+					cmd.Parameters.AddWithValue("@awayPPG",game.awayPPG.ToString());
+					cmd.Parameters.AddWithValue("@homePIM",game.homePIM.ToString());
+					cmd.Parameters.AddWithValue("@awayPIM",game.awayPIM.ToString());
+					cmd.Parameters.AddWithValue("@homeFaceOffWinPercent",game.homeFaceOffWinPercent.ToString());
+					cmd.Parameters.AddWithValue("@awayFaceOffWinPercent",game.awayFaceOffWinPercent.ToString());
+					cmd.Parameters.AddWithValue("@homeBlockedShots",game.homeBlockedShots.ToString());
+					cmd.Parameters.AddWithValue("@awayBlockedShots",game.awayBlockedShots.ToString());
+					cmd.Parameters.AddWithValue("@homeHits",game.homeHits.ToString());
+					cmd.Parameters.AddWithValue("@awayHits",game.awayHits.ToString());
+					cmd.Parameters.AddWithValue("@homeTakeaways",game.homeTakeaways.ToString());
+					cmd.Parameters.AddWithValue("@awayTakeaways",game.awayTakeaways.ToString());
+					cmd.Parameters.AddWithValue("@homeGiveaways",game.homeGiveaways.ToString());
+					cmd.Parameters.AddWithValue("@awayGiveaways",game.awayGiveaways.ToString());
+
+					cmd.ExecuteNonQuery(); // Execute Query
+					cmd.Parameters.Clear();
+				}
+			}
 		}
 	}
 }

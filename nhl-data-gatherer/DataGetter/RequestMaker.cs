@@ -6,6 +6,7 @@ namespace nhl_data_builder.DataGetter
 	{
         private const string _seasonType = "02";
         private const string _url = "http://statsapi.web.nhl.com/api/v1/game/";
+        // Example Request: http://statsapi.web.nhl.com/api/v1/game/2019020001/feed/live
         public async Task<HttpResponseMessage> MakeRequest(string query)
         {
             HttpResponseMessage response;

@@ -9,7 +9,7 @@ namespace nhl_data_builder.DataGetter
         private IConfiguration Config;
         private IGameParser GameParser;
         private IRequestMaker RequestMaker;
-        private const int _maxGameId = 9;
+        private const int _maxGameId = 1300;
         private readonly List<int> _years = new List<int>(){ 2019 };
         private static Game _emptyGame = new Game();
 
@@ -22,6 +22,7 @@ namespace nhl_data_builder.DataGetter
 		public async Task GetData()
         {
             var gamesDA = new GamesDA(Config);
+            
 
             foreach (var year in _years)
             {
@@ -39,8 +40,8 @@ namespace nhl_data_builder.DataGetter
                             gameList.Add(game);
                     }
                 }
-
-                // TODO: Next step, store next year into database
+                // Add a years worth of games to db
+                gamesDA.AddGames(gameList);
             }
         }
 	}
