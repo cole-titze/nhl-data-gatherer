@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Configuration;
 using nhl_data_builder.Entities;
 using nhl_data_gatherer.DataAccess;
 
@@ -6,20 +5,21 @@ namespace nhl_data_builder.DataGetter
 {
     public class DataGetter
 	{
-        private IConfiguration Config;
         private IGameParser GameParser;
         private IRequestMaker RequestMaker;
-        private GamesDA gamesDA;
+        private IGamesDA gamesDataAccess;
         private const int _maxGameId = 1400;
+        private readonly int startYear = 2012;
+        private readonly int endYear;
         private readonly List<int> _years = new List<int>(){ 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021 };
         private static Game _emptyGame = new Game();
 
-        public DataGetter(IGameParser gameParser, IRequestMaker requestMaker, IConfiguration config)
+        public DataGetter(IGameParser gameParser, IRequestMaker requestMaker, IGamesDA gamesDA, int endingYear)
 		{
-            Config = config;
             GameParser = gameParser;
             RequestMaker = requestMaker;
-            gamesDA = new GamesDA(Config); // Should be abstracted to interface
+            gamesDataAccess = gamesDA;
+            endingYear = endingYear;
 		}
 		public async Task GetData()
         {
@@ -29,7 +29,7 @@ namespace nhl_data_builder.DataGetter
                 var gameList = new List<Game>();
                 for (int id = 0; id < _maxGameId; id++)
                 {
-                    var recordExists = CheckIfRecordExists(year, id);
+                    var recordExists = CheckIfRecordExistsInDb(year, id);
                     if(recordExists)
                         continue;
 
@@ -39,18 +39,18 @@ namespace nhl_data_builder.DataGetter
                     if (response.IsSuccessStatusCode)
                     {
                         game = await GameParser.BuildGame(response);
-                        if(game.homeTeamName != string.Empty) // abstract
+                        if (game.IsValid())
                             gameList.Add(game);
                     }
                 }
                 // Add a years worth of games to db
-                gamesDA.AddGames(gameList);
+                gamesDataAccess.AddGames(gameList);
             }
         }
 
-        private bool CheckIfRecordExists(int year, int id)
+        private bool CheckIfRecordExistsInDb(int year, int id)
         {
-            Game game = gamesDA.GetGameById(RequestMaker.BuildId(year, id));
+            Game game = gamesDataAccess.GetGameById(RequestMaker.BuildId(year, id));
 
             if(game.id == -1)
                 return false;
