@@ -19,11 +19,11 @@ namespace nhl_data_builder.DataGetter
             GameParser = gameParser;
             RequestMaker = requestMaker;
             gamesDataAccess = gamesDA;
-            endingYear = endingYear;
+            endYear = endingYear;
 		}
 		public async Task GetData()
         {
-            foreach (var year in _years)
+            for (int year = startYear; year <= endYear; year++)
             {
                 Game game = _emptyGame;
                 var gameList = new List<Game>();
