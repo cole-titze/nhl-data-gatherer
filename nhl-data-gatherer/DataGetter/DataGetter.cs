@@ -10,7 +10,7 @@ namespace nhl_data_builder.DataGetter
         private IGameParser GameParser;
         private IRequestMaker RequestMaker;
         private GamesDA gamesDA;
-        private const int _maxGameId = 9;
+        private const int _maxGameId = 1400;
         private readonly List<int> _years = new List<int>(){ 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021 };
         private static Game _emptyGame = new Game();
 
