@@ -31,5 +31,10 @@ namespace nhl_data_builder.Entities
         public int awayTakeaways { get; set; }
         public int homeGiveaways { get; set; }
         public int awayGiveaways { get; set; }
+
+        public bool IsValid()
+        {
+            return homeFaceOffWinPercent != 0 || awayFaceOffWinPercent != 0;
+        }
     }
 }
