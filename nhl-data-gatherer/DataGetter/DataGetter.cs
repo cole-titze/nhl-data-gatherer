@@ -10,7 +10,7 @@ namespace nhl_data_builder.DataGetter
         private IGameParser GameParser;
         private IRequestMaker RequestMaker;
         private const int _maxGameId = 1300;
-        private readonly List<int> _years = new List<int>(){ 2019 };
+        private readonly List<int> _years = new List<int>(){ 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021 };
         private static Game _emptyGame = new Game();
 
         public DataGetter(IGameParser gameParser, IRequestMaker requestMaker, IConfiguration config)
@@ -21,16 +21,17 @@ namespace nhl_data_builder.DataGetter
 		}
 		public async Task GetData()
         {
-            var gamesDA = new GamesDA(Config);
-            
+            var gamesDA = new GamesDA(Config);            
 
             foreach (var year in _years)
             {
                 Game game = _emptyGame;
                 var gameList = new List<Game>();
-                for (int i = 0; i < _maxGameId; i++)
+                for (int id = 0; id < _maxGameId; id++)
                 {
-                    var query = RequestMaker.CreateRequestQuery(year, i);
+                    //var recordExists = CheckIfRecordExists();
+
+                    var query = RequestMaker.CreateRequestQuery(year, id);
                     var response = await RequestMaker.MakeRequest(query);
 
                     if (response.IsSuccessStatusCode)

@@ -12,49 +12,6 @@ namespace nhl_data_gatherer.DataAccess
 		{
 			_connectionString = iconfiguration.GetConnectionString("Default");  
 		}
-		public List<Game> GetGames()  
-		{
-			var games = new List<Game>();  
-
-			using (SqlConnection con = new SqlConnection(_connectionString))
-			{
-				SqlCommand cmd = new SqlCommand("GetGames", con);
-				cmd.CommandType = CommandType.StoredProcedure;
-				con.Open();
-				SqlDataReader rdr = cmd.ExecuteReader();
-				while (rdr.Read())
-				{
-					games.Add(new Game
-					{
-						id = Convert.ToInt32(rdr[0]),
-						homeTeamName = rdr[1].ToString(),
-						awayTeamName = rdr[2].ToString(),
-						seasonStartYear = Convert.ToInt32(rdr[3]),
-						gameDate = DateTime.Parse(rdr[4].ToString()),
-						homeGoals = Convert.ToInt32(rdr[5]),
-						awayGoals = Convert.ToInt32(rdr[6]),
-						winner = Convert.ToInt32(rdr[7]),
-						homeSOG = Convert.ToInt32(rdr[8]),
-						awaySOG = Convert.ToInt32(rdr[9]),
-						homePPG = Convert.ToInt32(rdr[10]),
-						awayPPG = Convert.ToInt32(rdr[11]),
-						homePIM = Convert.ToInt32(rdr[12]),
-						awayPIM = Convert.ToInt32(rdr[13]),
-						homeFaceOffWinPercent = Convert.ToDouble(rdr[14]),
-						awayFaceOffWinPercent = Convert.ToDouble(rdr[15]),
-						homeBlockedShots = Convert.ToInt32(rdr[16]),
-						awayBlockedShots = Convert.ToInt32(rdr[17]),
-						homeHits = Convert.ToInt32(rdr[18]),
-						awayHits = Convert.ToInt32(rdr[19]),
-						homeTakeaways = Convert.ToInt32(rdr[20]),
-						awayTakeaways = Convert.ToInt32(rdr[21]),
-						homeGiveaways = Convert.ToInt32(rdr[22]),
-						awayGiveaways = Convert.ToInt32(rdr[23]),
-					});
-				}
-			}
-			return games;
-		}
 		public void AddGames(List<Game> games)
 		{
 			using (SqlConnection con = new SqlConnection(_connectionString))
@@ -93,6 +50,45 @@ namespace nhl_data_gatherer.DataAccess
 					cmd.Parameters.Clear();
 				}
 			}
+		}
+		public List<Game> GetGames()
+		{
+			var games = new List<Game>();  
+			var table = new DataTable();    
+			using (var da = new SqlDataAdapter("SELECT * FROM Game", _connectionString))
+			{      
+				da.Fill(table);
+			}
+			foreach(DataRow row in table.Rows)
+			{
+				games.Add(new Game(){
+					id = Convert.ToInt32(row["id"]),
+					homeTeamName = row["homeTeamName"].ToString(),
+					awayTeamName = row["awayTeamName"].ToString(),
+					seasonStartYear = Convert.ToInt32(row["seasonStartYear"]),
+					gameDate = Convert.ToDateTime(row["gameDate"]),
+					homeGoals = Convert.ToInt32(row["homeGoals"]),
+					awayGoals = Convert.ToInt32(row["awayGoals"]),
+					winner = Convert.ToInt32(row["winner"]),
+					homeSOG = Convert.ToInt32(row["homeSOG"]),
+					awaySOG = Convert.ToInt32(row["awaySOG"]),
+					homePPG = Convert.ToDouble(row["homePPG"]),
+					awayPPG = Convert.ToDouble(row["awayPPG"]),
+					homePIM = Convert.ToInt32(row["homePIM"]),
+					awayPIM = Convert.ToInt32(row["awayPIM"]),
+					homeFaceOffWinPercent = Convert.ToDouble(row["homeFaceOffWinPercent"]),
+					awayFaceOffWinPercent = Convert.ToDouble(row["awayFaceOffWinPercent"]),
+					homeBlockedShots = Convert.ToInt32(row["homeBlockedShots"]),
+					awayBlockedShots = Convert.ToInt32(row["awayBlockedShots"]),
+					homeHits = Convert.ToInt32(row["homeHits"]),
+					awayHits = Convert.ToInt32(row["awayHits"]),
+					homeGiveaways = Convert.ToInt32(row["homeGiveaways"]),
+					awayGiveaways = Convert.ToInt32(row["awayGiveaways"]),
+					homeTakeaways = Convert.ToInt32(row["homeTakeaways"]),
+					awayTakeaways = Convert.ToInt32(row["awayTakeaways"]),
+				});
+			}
+			return games;
 		}
 	}
 }
