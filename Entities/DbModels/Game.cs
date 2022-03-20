@@ -7,7 +7,7 @@ namespace nhl_data_builder.Entities
     }
     public class Game
     {
-        public int id { get; set; }
+        public int id { get; set; } = -1;
         public string homeTeamName { get; set; } = string.Empty;
         public string awayTeamName { get; set; } = string.Empty;
         public int seasonStartYear { get; set; }
@@ -17,8 +17,8 @@ namespace nhl_data_builder.Entities
         public int winner { get; set; }
         public int homeSOG { get; set; }
         public int awaySOG { get; set; }
-        public double homePPG { get; set; }
-        public double awayPPG { get; set; }
+        public int homePPG { get; set; }
+        public int awayPPG { get; set; }
         public int homePIM { get; set; }
         public int awayPIM { get; set; }
         public double homeFaceOffWinPercent { get; set; }

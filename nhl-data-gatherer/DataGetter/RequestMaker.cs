@@ -24,12 +24,17 @@ namespace nhl_data_builder.DataGetter
 
         public string CreateRequestQuery(int year, int id)
         {
-            string idString = String.Format("{0,0:D4}", id);
-            var yearStr = year.ToString();
+            var idStr = BuildId(year, id);
             // Build request url
-            string urlParameters = $"{yearStr}{_seasonType}{idString}/feed/live";
+            string urlParameters = $"{idStr}/feed/live";
 
             return urlParameters;
         }
-	}
+        public int BuildId(int year, int id)
+        {
+            var yearStr = year.ToString();
+            var idStr = String.Format("{0,0:D4}", id);
+            return Convert.ToInt32($"{yearStr}{_seasonType}{idStr}");
+        }
+    }
 }
