@@ -1,68 +1,113 @@
-﻿using nhl_data_builder.Entities;  
-using Microsoft.Extensions.Configuration;  
-using System;  
-using System.Collections.Generic;  
-using System.Data;  
+﻿using nhl_data_builder.Entities;
+using Microsoft.Extensions.Configuration;
+using System.Data;
 using System.Data.SqlClient;
 
 namespace nhl_data_gatherer.DataAccess
 {
-	public class GamesDA
+    public class GamesDA
 	{
 		private string _connectionString;
 		public GamesDA(IConfiguration iconfiguration)
 		{
 			_connectionString = iconfiguration.GetConnectionString("Default");  
 		}
-		public List<Game> GetGames()  
-		{  
-			var games = new List<Game>();  
-			try  
-			{  
-				using (SqlConnection con = new SqlConnection(_connectionString))  
-				{  
-					SqlCommand cmd = new SqlCommand("GET_ALL_Games", con);  
-					cmd.CommandType = CommandType.StoredProcedure;
-					con.Open();
-					SqlDataReader rdr = cmd.ExecuteReader();
-					while (rdr.Read())
-					{
-						games.Add(new Game
-						{  
-								id = Convert.ToInt32(rdr[0]),  
-								homeTeamName = rdr[1].ToString(),
-								awayTeamName = rdr[2].ToString(),
-								seasonStartYear = Convert.ToInt32(rdr[3]),
-								gameDate = DateTime.Parse(rdr[4].ToString()),
-								homeGoals = Convert.ToInt32(rdr[5]),
-								awayGoals = Convert.ToInt32(rdr[6]),
-								winner = Convert.ToInt32(rdr[7]),
-								homeSOG = Convert.ToInt32(rdr[8]),
-								awaySOG = Convert.ToInt32(rdr[9]),
-								homePPG = Convert.ToInt32(rdr[10]),
-								awayPPG = Convert.ToInt32(rdr[11]),
-								homePIM = Convert.ToInt32(rdr[12]),
-								awayPIM = Convert.ToInt32(rdr[13]),
-								homeFaceOffWinPercent = Convert.ToDouble(rdr[14]),
-								awayFaceOffWinPercent = Convert.ToDouble(rdr[15]),
-								homeBlockedShots = Convert.ToInt32(rdr[16]),
-								awayBlockedShots = Convert.ToInt32(rdr[17]),
-								homeHits = Convert.ToInt32(rdr[18]),
-								awayHits = Convert.ToInt32(rdr[19]),
-								homeTakeaways = Convert.ToInt32(rdr[20]),
-								awayTakeaways = Convert.ToInt32(rdr[21]),
-								homeGiveaways = Convert.ToInt32(rdr[22]),
-								awayGiveaways = Convert.ToInt32(rdr[23]),
-							});  
-					}                 
-					}  
-				}  
-			catch (Exception ex)  
-			{  
-				throw ex;  
-			}  
-			return games;  
-		}  
-	} 
-}
+		public void AddGames(List<Game> games)
+		{
+			var gameTable = new DataTable();
 
+			using (var da = new SqlDataAdapter("SELECT * FROM Game WHERE 0 = 1", _connectionString))
+			{
+				da.Fill(gameTable);
+				foreach(var game in games)
+				{
+					var newRow = gameTable.NewRow();
+					newRow["id"] = game.id;
+					newRow["homeTeamName"] = game.homeTeamName;
+					newRow["awayTeamName"] = game.awayTeamName;
+					newRow["seasonStartYear"] = game.seasonStartYear;
+					newRow["gameDate"] = game.gameDate;
+					newRow["homeGoals"] = game.homeGoals;
+					newRow["awayGoals"] = game.awayGoals;
+					newRow["winner"] = game.winner;
+					newRow["homeSOG"] = game.homeSOG;
+					newRow["awaySOG"] = game.awaySOG;
+					newRow["homePPG"] = game.homePPG;
+					newRow["awayPPG"] = game.awayPPG;
+					newRow["homePIM"] = game.homePIM;
+					newRow["awayPIM"] = game.awayPIM;
+					newRow["homeFaceOffWinPercent"] = game.homeFaceOffWinPercent;
+					newRow["awayFaceOffWinPercent"] = game.awayFaceOffWinPercent;
+					newRow["homeBlockedShots"] = game.homeBlockedShots;
+					newRow["awayBlockedShots"] = game.awayBlockedShots;
+					newRow["homeHits"] = game.homeHits;
+					newRow["awayHits"] = game.awayHits;
+					newRow["homeTakeaways"] = game.homeTakeaways;
+					newRow["awayTakeaways"] = game.awayTakeaways;
+					newRow["homeGiveaways"] = game.homeGiveaways;
+					newRow["awayGiveaways"] = game.awayGiveaways;
+
+					gameTable.Rows.Add(newRow);
+				}
+				new SqlCommandBuilder(da);
+				da.Update(gameTable);
+			}
+		}
+
+        public Game GetGameById(int id)
+        {
+			var gameTable = new DataTable();
+            using (var da = new SqlDataAdapter($"SELECT * FROM Game WHERE id = {id}", _connectionString))
+			{
+				da.Fill(gameTable);
+			}
+			if(gameTable.Rows.Count == 0)
+				return new Game();
+			return MapDataRowToGame(gameTable.Rows[0]);
+        }
+
+        public List<Game> GetGames()
+		{
+			var games = new List<Game>();  
+			var table = new DataTable();    
+			using (var da = new SqlDataAdapter("SELECT * FROM Game", _connectionString))
+			{      
+				da.Fill(table);
+			}
+			foreach(DataRow row in table.Rows)
+			{
+				games.Add(MapDataRowToGame(row));
+			}
+			return games;
+		}
+		public Game MapDataRowToGame(DataRow row)
+		{
+			return new Game(){
+				id = Convert.ToInt32(row["id"]),
+				homeTeamName = row["homeTeamName"].ToString(),
+				awayTeamName = row["awayTeamName"].ToString(),
+				seasonStartYear = Convert.ToInt32(row["seasonStartYear"]),
+				gameDate = Convert.ToDateTime(row["gameDate"]),
+				homeGoals = Convert.ToInt32(row["homeGoals"]),
+				awayGoals = Convert.ToInt32(row["awayGoals"]),
+				winner = Convert.ToInt32(row["winner"]),
+				homeSOG = Convert.ToInt32(row["homeSOG"]),
+				awaySOG = Convert.ToInt32(row["awaySOG"]),
+				homePPG = Convert.ToInt32(row["homePPG"]),
+				awayPPG = Convert.ToInt32(row["awayPPG"]),
+				homePIM = Convert.ToInt32(row["homePIM"]),
+				awayPIM = Convert.ToInt32(row["awayPIM"]),
+				homeFaceOffWinPercent = Convert.ToDouble(row["homeFaceOffWinPercent"]),
+				awayFaceOffWinPercent = Convert.ToDouble(row["awayFaceOffWinPercent"]),
+				homeBlockedShots = Convert.ToInt32(row["homeBlockedShots"]),
+				awayBlockedShots = Convert.ToInt32(row["awayBlockedShots"]),
+				homeHits = Convert.ToInt32(row["homeHits"]),
+				awayHits = Convert.ToInt32(row["awayHits"]),
+				homeGiveaways = Convert.ToInt32(row["homeGiveaways"]),
+				awayGiveaways = Convert.ToInt32(row["awayGiveaways"]),
+				homeTakeaways = Convert.ToInt32(row["homeTakeaways"]),
+				awayTakeaways = Convert.ToInt32(row["awayTakeaways"]),
+			};
+		}
+	}
+}

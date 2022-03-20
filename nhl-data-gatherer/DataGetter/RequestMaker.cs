@@ -6,6 +6,7 @@ namespace nhl_data_builder.DataGetter
 	{
         private const string _seasonType = "02";
         private const string _url = "http://statsapi.web.nhl.com/api/v1/game/";
+        // Example Request: http://statsapi.web.nhl.com/api/v1/game/2019020001/feed/live
         public async Task<HttpResponseMessage> MakeRequest(string query)
         {
             HttpResponseMessage response;
@@ -23,12 +24,17 @@ namespace nhl_data_builder.DataGetter
 
         public string CreateRequestQuery(int year, int id)
         {
-            string idString = String.Format("{0,0:D4}", id);
-            var yearStr = year.ToString();
+            var idStr = BuildId(year, id);
             // Build request url
-            string urlParameters = $"{yearStr}{_seasonType}{idString}/feed/live";
+            string urlParameters = $"{idStr}/feed/live";
 
             return urlParameters;
         }
-	}
+        public int BuildId(int year, int id)
+        {
+            var yearStr = year.ToString();
+            var idStr = String.Format("{0,0:D4}", id);
+            return Convert.ToInt32($"{yearStr}{_seasonType}{idStr}");
+        }
+    }
 }

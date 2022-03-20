@@ -4,5 +4,6 @@ namespace nhl_data_builder.DataGetter
     {
         Task<HttpResponseMessage> MakeRequest(string query);
         string CreateRequestQuery(int year, int id);
+        int BuildId(int year, int id);
     }
 }
