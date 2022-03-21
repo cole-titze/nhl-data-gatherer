@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entities", "Entities\Entiti
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NhlDataCollection", "NhlDataCollection\NhlDataCollection.csproj", "{958B34CF-EB03-481A-836C-384F979CA6A7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataCollectionTrigger", "DataCollectionTrigger\DataCollectionTrigger.csproj", "{6DE2E3A8-9E62-4887-A544-ECA48D90C566}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{958B34CF-EB03-481A-836C-384F979CA6A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{958B34CF-EB03-481A-836C-384F979CA6A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{958B34CF-EB03-481A-836C-384F979CA6A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DE2E3A8-9E62-4887-A544-ECA48D90C566}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DE2E3A8-9E62-4887-A544-ECA48D90C566}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DE2E3A8-9E62-4887-A544-ECA48D90C566}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DE2E3A8-9E62-4887-A544-ECA48D90C566}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
