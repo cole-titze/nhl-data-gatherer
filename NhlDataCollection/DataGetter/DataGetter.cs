@@ -1,7 +1,7 @@
-using nhl_data_builder.Entities;
-using nhl_data_gatherer.DataAccess;
+using Entities.Models;
+using NhlDataCollection.DataAccess;
 
-namespace nhl_data_builder.DataGetter
+namespace NhlDataCollection.DataGetter
 {
     public class DataGetter
 	{

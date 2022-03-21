@@ -1,5 +1,6 @@
-using nhl_data_builder.Entities;
-namespace nhl_data_builder.DataGetter
+using Entities.Models;
+
+namespace NhlDataCollection.DataGetter
 {
     public interface IGameParser
     {

@@ -1,4 +1,4 @@
-namespace nhl_data_builder.DataGetter
+namespace NhlDataCollection.DataGetter
 {
     public interface IRequestMaker
     {

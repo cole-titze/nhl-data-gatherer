@@ -1,6 +1,6 @@
 using System.Net.Http.Headers;
 
-namespace nhl_data_builder.DataGetter
+namespace NhlDataCollection.DataGetter
 {
     public class RequestMaker : IRequestMaker
 	{

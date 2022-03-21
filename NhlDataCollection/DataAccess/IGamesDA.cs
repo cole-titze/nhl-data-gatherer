@@ -1,7 +1,7 @@
-using nhl_data_builder.Entities;
+using Entities.Models;
 using System.Data;
 
-namespace nhl_data_gatherer.DataAccess
+namespace NhlDataCollection.DataAccess
 {
     public interface IGamesDA
     {
