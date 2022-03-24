@@ -8,9 +8,9 @@ namespace NhlDataCollection.DataAccess
     public class GamesDA : IGamesDA
     {
         private string _connectionString;
-        public GamesDA(IConfiguration iconfiguration)
+        public GamesDA(string connectionString)
         {
-            _connectionString = iconfiguration.GetConnectionString("Default");
+            _connectionString = connectionString;
         }
         public void AddGames(List<Game> games)
         {
