@@ -1,16 +1,16 @@
-﻿using nhl_data_builder.Entities;
+﻿using Entities.Models;
 using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 
-namespace nhl_data_gatherer.DataAccess
+namespace NhlDataCollection.DataAccess
 {
     public class GamesDA : IGamesDA
     {
         private string _connectionString;
-        public GamesDA(IConfiguration iconfiguration)
+        public GamesDA(string connectionString)
         {
-            _connectionString = iconfiguration.GetConnectionString("Default");
+            _connectionString = connectionString;
         }
         public void AddGames(List<Game> games)
         {

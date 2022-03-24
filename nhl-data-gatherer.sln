@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 25.0.1700.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nhl-data-gatherer", "nhl-data-gatherer\nhl-data-gatherer.csproj", "{A0954479-F11C-4A80-BF82-2FB9838EF20E}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entities", "Entities\Entities.csproj", "{8A084376-B5E0-4E5C-B748-DAB587B81D06}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NhlDataCollection", "NhlDataCollection\NhlDataCollection.csproj", "{958B34CF-EB03-481A-836C-384F979CA6A7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataCollectionTrigger", "DataCollectionTrigger\DataCollectionTrigger.csproj", "{6DE2E3A8-9E62-4887-A544-ECA48D90C566}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,14 @@ Global
 		{8A084376-B5E0-4E5C-B748-DAB587B81D06}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A084376-B5E0-4E5C-B748-DAB587B81D06}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A084376-B5E0-4E5C-B748-DAB587B81D06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{958B34CF-EB03-481A-836C-384F979CA6A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{958B34CF-EB03-481A-836C-384F979CA6A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{958B34CF-EB03-481A-836C-384F979CA6A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{958B34CF-EB03-481A-836C-384F979CA6A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DE2E3A8-9E62-4887-A544-ECA48D90C566}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DE2E3A8-9E62-4887-A544-ECA48D90C566}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DE2E3A8-9E62-4887-A544-ECA48D90C566}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DE2E3A8-9E62-4887-A544-ECA48D90C566}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

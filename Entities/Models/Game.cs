@@ -1,4 +1,4 @@
-namespace nhl_data_builder.Entities
+namespace Entities.Models
 {
     public enum Winner
     {
