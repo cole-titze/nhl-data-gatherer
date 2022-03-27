@@ -66,6 +66,19 @@ namespace NhlDataCollection.DataAccess
             return MapDataRowToGame(gameTable.Rows[0]);
         }
 
+        public int GetGameCountBySeason(int year)
+        {
+            int count;
+            string sql = $"SELECT COUNT(id) FROM Game WHERE seasonStartYear = {year};";
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                SqlCommand cmd = new SqlCommand(sql, conn);
+                conn.Open();
+                count = (int)cmd.ExecuteScalar();
+            }
+            return count;
+        }
+
         public List<Game> GetGames()
         {
             var games = new List<Game>();
@@ -79,20 +92,6 @@ namespace NhlDataCollection.DataAccess
                 games.Add(MapDataRowToGame(row));
             }
             return games;
-        }
-
-        public int GetMostRecentIdBySeasonStartYear(int year)
-        {
-            int id;
-            string sql = $"SELECT max(SUBQUERY.id) FROM (SELECT * FROM Game WHERE seasonStartYear = {year}) AS SUBQUERY";
-            using (SqlConnection conn = new SqlConnection(_connectionString))
-            {
-                SqlCommand cmd = new SqlCommand(sql, conn);
-                conn.Open();
-                id = (int)cmd.ExecuteScalar();
-            }
-
-            return id;
         }
 
         public Game MapDataRowToGame(DataRow row)
