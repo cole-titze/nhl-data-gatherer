@@ -8,10 +8,10 @@ namespace NhlDataCollection.DataGetter
         private IGameParser GameParser;
         private IRequestMaker RequestMaker;
         private IGamesDA gamesDataAccess;
+        private const int cutOffCount = 300;
         private const int _maxGameId = 1400;
         private readonly int startYear = 2012;
         private readonly int endYear;
-        private static Game _emptyGame = new Game();
 
         public DataGetter(IGameParser gameParser, IRequestMaker requestMaker, IGamesDA gamesDA, int endingYear)
 		{
@@ -22,20 +22,30 @@ namespace NhlDataCollection.DataGetter
 		}
 		public async Task GetData()
         {
-            for (int year = startYear; year < endYear; year++)
+            for (int year = startYear; year <= endYear; year++)
             {
+                var gameCount = GetStoredGameCountForSeason(year);
+                // Skip if data is already in db and not the current year
+                // If current year data could be incomplete so run anyways
+                if (gameCount > cutOffCount && year < endYear)
+                    continue;
+
                 var gameList = await GetGamesForSeason(year);
                 // Add a years worth of games to db
                 gamesDataAccess.AddGames(gameList);
             }
         }
 
+        private int GetStoredGameCountForSeason(int year)
+        {
+            return gamesDataAccess.GetGameCountBySeason(year);
+        }
+
         private async Task<List<Game>> GetGamesForSeason(int season)
         {
             var gameList = new List<Game>();
-            var latestGame = GetMostRecentGameByYear(season);
 
-            for (int id = latestGame; id < _maxGameId; id++)
+            for (int id = 0; id < _maxGameId; id++)
             {
                 var recordExists = CheckIfRecordExistsInDb(season, id);
                 if (recordExists)
@@ -52,14 +62,6 @@ namespace NhlDataCollection.DataGetter
                 }
             }
             return gameList;
-        }
-
-        private int GetMostRecentGameByYear(int year)
-        {
-            int gameId = gamesDataAccess.GetMostRecentIdBySeasonStartYear(year);
-            var idStr = gameId.ToString();
-            
-            return Convert.ToInt32(idStr.Substring(idStr.Length - 4)); // Get id from full gameid
         }
 
         private bool CheckIfRecordExistsInDb(int year, int id)
