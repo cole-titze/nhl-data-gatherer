@@ -10,5 +10,7 @@ namespace NhlDataCollection.DataAccess
         List<Game> GetGames();
         Game MapDataRowToGame(DataRow row);
         int GetGameCountBySeason(int year);
+        void CacheSeasonOfGames(int year);
+        Game GetCachedGameById(int id);
     }
 }
