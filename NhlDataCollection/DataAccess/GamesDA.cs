@@ -1,8 +1,6 @@
-﻿using Entities.Models;
-using Microsoft.Extensions.Configuration;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
+using Entities.Models;
 
 namespace NhlDataCollection.DataAccess
 {
