@@ -80,6 +80,21 @@ namespace NhlDataCollection.DataAccess
             }
             return games;
         }
+
+        public int GetMostRecentIdBySeasonStartYear(int year)
+        {
+            int id;
+            string sql = $"SELECT max(SUBQUERY.id) FROM (SELECT * FROM Game WHERE seasonStartYear = {year}) AS SUBQUERY";
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                SqlCommand cmd = new SqlCommand(sql, conn);
+                conn.Open();
+                id = (int)cmd.ExecuteScalar();
+            }
+
+            return id;
+        }
+
         public Game MapDataRowToGame(DataRow row)
         {
             return new Game()

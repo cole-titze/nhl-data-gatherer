@@ -9,5 +9,6 @@ namespace NhlDataCollection.DataAccess
         Game GetGameById(int id);
         List<Game> GetGames();
         Game MapDataRowToGame(DataRow row);
+        int GetMostRecentIdBySeasonStartYear(int year);
     }
 }
