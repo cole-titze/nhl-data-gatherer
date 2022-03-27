@@ -1,16 +1,16 @@
-name: Deploy DotNet project to function app with a Linux environment
+name: Deploy DotNet project to function app with a Windows environment
 
 on:
   [push]
 
 env:
-  AZURE_FUNCTIONAPP_NAME: NhlDataCollection  # set this to your application's name
+  AZURE_FUNCTIONAPP_NAME: NhlDataCollectionWindows  # set this to your application's name
   AZURE_FUNCTIONAPP_PACKAGE_PATH: './DataCollectionTrigger'    # set this to the path to your web app project, defaults to the repository root
-  DOTNET_VERSION: '6.0.201'              # set this to the dotnet version to use
+  DOTNET_VERSION: '6.0.201'             # set this to the dotnet version to use
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
     - name: 'Checkout GitHub Action'
       uses: actions/checkout@v2
@@ -21,7 +21,7 @@ jobs:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
     - name: 'Resolve Project Dependencies Using Dotnet'
-      shell: bash
+      shell: pwsh
       run: |
         pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
         dotnet build --configuration Release --output ./output
