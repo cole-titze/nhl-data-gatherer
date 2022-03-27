@@ -30,6 +30,7 @@ namespace NhlDataCollection.DataGetter
                 if (gameCount > cutOffCount && year < endYear)
                     continue;
 
+                gamesDataAccess.CacheSeasonOfGames(year);
                 var gameList = await GetGamesForSeason(year);
                 // Add a years worth of games to db
                 gamesDataAccess.AddGames(gameList);
@@ -66,7 +67,7 @@ namespace NhlDataCollection.DataGetter
 
         private bool CheckIfRecordExistsInDb(int year, int id)
         {
-            Game game = gamesDataAccess.GetGameById(RequestMaker.BuildId(year, id));
+            Game game = gamesDataAccess.GetCachedGameById(RequestMaker.BuildId(year, id));
 
             if(game.id == -1)
                 return false;

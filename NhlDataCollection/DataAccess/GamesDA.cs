@@ -1,13 +1,14 @@
-﻿using Entities.Models;
-using Microsoft.Extensions.Configuration;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
+using Entities.Models;
 
 namespace NhlDataCollection.DataAccess
 {
     public class GamesDA : IGamesDA
     {
         private string _connectionString;
+        private List<Game> _gamesForYear = new List<Game>();
+
         public GamesDA(string connectionString)
         {
             _connectionString = connectionString;
@@ -52,6 +53,29 @@ namespace NhlDataCollection.DataAccess
                 new SqlCommandBuilder(da);
                 da.Update(gameTable);
             }
+        }
+
+        public void CacheSeasonOfGames(int year)
+        {
+            _gamesForYear.Clear();
+            var dataTable = new DataTable();
+            using (var da = new SqlDataAdapter($"SELECT * FROM Game WHERE seasonStartYear = {year}", _connectionString))
+            {
+                da.Fill(dataTable);
+            }
+            foreach (DataRow row in dataTable.Rows)
+            {
+                _gamesForYear.Add(MapDataRowToGame(row));
+            }
+        }
+
+        public Game GetCachedGameById(int id)
+        {
+            var game = _gamesForYear.FirstOrDefault(i => i.id == id);
+            if (game == null)
+                return new Game();
+
+            return game;
         }
 
         public Game GetGameById(int id)
