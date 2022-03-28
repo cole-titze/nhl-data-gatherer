@@ -1,5 +1,6 @@
 using Entities.Models;
 using NhlDataCollection.DataAccess;
+using Microsoft.Extensions.Logging;
 
 namespace NhlDataCollection.DataGetter
 {
@@ -12,18 +13,21 @@ namespace NhlDataCollection.DataGetter
         private const int _maxGameId = 1400;
         private readonly int startYear = 2012;
         private readonly int endYear;
+        private readonly ILogger<DataGetter> _logger;
 
-        public DataGetter(IGameParser gameParser, IRequestMaker requestMaker, IGamesDA gamesDA, int endingYear)
+        public DataGetter(IGameParser gameParser, IRequestMaker requestMaker, IGamesDA gamesDA, int endingYear, ILogger<DataGetter> logger)
 		{
             GameParser = gameParser;
             RequestMaker = requestMaker;
             gamesDataAccess = gamesDA;
             endYear = endingYear;
+            _logger = logger;
 		}
 		public async Task GetData()
         {
             for (int year = startYear; year <= endYear; year++)
             {
+                _logger.LogInformation("Getting Year: " + year.ToString());
                 var gameCount = GetStoredGameCountForSeason(year);
                 // Skip if data is already in db and not the current year
                 // If current year data could be incomplete so run anyways
