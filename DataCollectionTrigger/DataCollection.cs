@@ -1,19 +1,16 @@
 ﻿using System;
-using NhlDataCollection.DataAccess;
-using NhlDataCollection.DataGetter;
+using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
-using Microsoft.ApplicationInsights.Extensibility;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.ApplicationInsights.Channel;
+using NhlDataCollection.DataAccess;
+using NhlDataCollection.DataGetter;
 
 namespace DataCollectionTrigger
 {
     public class DataCollection
     {
         [FunctionName("DataCollectionTrigger")]
-        public async Task Run([TimerTrigger("37 15 0 * * *")]TimerInfo myTimer, ILogger logger)
+        public async Task Run([TimerTrigger("0 0 0 * * *")]TimerInfo myTimer, ILogger logger)
         {
             // Run Application
             logger.LogInformation("Starting App");
