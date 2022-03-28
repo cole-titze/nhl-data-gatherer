@@ -13,9 +13,9 @@ namespace NhlDataCollection.DataGetter
         private const int _maxGameId = 1400;
         private readonly int startYear = 2012;
         private readonly int endYear;
-        private readonly ILogger<DataGetter> _logger;
+        private readonly ILogger _logger;
 
-        public DataGetter(IGameParser gameParser, IRequestMaker requestMaker, IGamesDA gamesDA, int endingYear, ILogger<DataGetter> logger)
+        public DataGetter(IGameParser gameParser, IRequestMaker requestMaker, IGamesDA gamesDA, int endingYear, ILogger logger)
 		{
             GameParser = gameParser;
             RequestMaker = requestMaker;
