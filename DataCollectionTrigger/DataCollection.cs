@@ -13,24 +13,8 @@ namespace DataCollectionTrigger
     public class DataCollection
     {
         [FunctionName("DataCollectionTrigger")]
-        public async Task Run([TimerTrigger("0 0 0 * * *")]TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("37 15 0 * * *")]TimerInfo myTimer, ILogger logger)
         {
-            // Setup Logging
-            string appInsightsKey = System.Environment.GetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY", EnvironmentVariableTarget.Process);
-
-            using var channel = new InMemoryChannel();
-            IServiceCollection services = new ServiceCollection();
-            services.Configure<TelemetryConfiguration>(config => config.TelemetryChannel = channel);
-            services.AddLogging(builder =>
-            {
-                // Only Application Insights is registered as a logger provider
-                builder.AddApplicationInsights(appInsightsKey);
-            });
-
-            IServiceProvider serviceProvider = services.BuildServiceProvider();
-            ILogger<DataGetter> logger = serviceProvider.GetRequiredService<ILogger<DataGetter>>();
-
-
             // Run Application
             logger.LogInformation("Starting App");
             string connectionString = System.Environment.GetEnvironmentVariable("GamesDatabase", EnvironmentVariableTarget.Process);
