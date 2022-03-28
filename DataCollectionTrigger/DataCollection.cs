@@ -32,6 +32,7 @@ namespace DataCollectionTrigger
 
 
             // Run Application
+            logger.LogInformation("Starting App");
             string connectionString = System.Environment.GetEnvironmentVariable("GamesDatabase", EnvironmentVariableTarget.Process);
 
             var gameParser = new GameParser();
@@ -40,7 +41,7 @@ namespace DataCollectionTrigger
             var endYear = GetEndSeason(DateTime.UtcNow);
             var dataGetter = new DataGetter(gameParser, requestMaker, dataAccess, endYear, logger);
             await dataGetter.GetData();
-            Console.WriteLine("Completed!");
+            logger.LogInformation("Completed!");
         }
 
         // Season spans 2 years (2021-2022) but we only want the start year of the season
