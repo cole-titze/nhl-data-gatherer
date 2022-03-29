@@ -50,7 +50,6 @@ namespace DataAccess.GamesRepository
 
                     gameTable.Rows.Add(newRow);
                 }
-                new SqlCommandBuilder(da);
                 da.Update(gameTable);
             }
         }
@@ -76,6 +75,11 @@ namespace DataAccess.GamesRepository
                 return new Game();
 
             return game;
+        }
+
+        public List<Game> GetCachedGames()
+        {
+            return _gamesForYear;
         }
 
         public Game GetGameById(int id)

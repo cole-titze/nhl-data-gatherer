@@ -12,5 +12,6 @@ namespace DataAccess.GamesRepository
         int GetGameCountBySeason(int year);
         void CacheSeasonOfGames(int year);
         Game GetCachedGameById(int id);
+        List<Game> GetCachedGames();
     }
 }

@@ -4,6 +4,8 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using DataAccess.GamesRepository;
 using NhlDataCollection.DataGetter;
+using Entities;
+using NhlDataCleaning;
 
 namespace DataCollectionTrigger
 {
@@ -19,14 +21,18 @@ namespace DataCollectionTrigger
             var gameParser = new GameParser();
             var requestMaker = new RequestMaker();
             var dataAccess = new GamesDA(connectionString);
-            var endYear = GetEndSeason(DateTime.UtcNow);
-            var dataGetter = new DataGetter(gameParser, requestMaker, dataAccess, endYear, logger);
+            var dateRange = new DateRange()
+            {
+                StartYear = 2012,
+                EndYear = GetEndSeason(DateTime.UtcNow),
+            };
+            var dataGetter = new DataGetter(gameParser, requestMaker, dataAccess, dateRange, logger);
             await dataGetter.GetData();
             logger.LogInformation("Completed Data Collection");
 
             // Run Data Cleaning
             logger.LogInformation("Starting Data Cleaning");
-
+            var dataCleaner = new DataCleaner(logger, dataAccess, dateRange);
             logger.LogInformation("Completed Data Cleaning");
         }
 
