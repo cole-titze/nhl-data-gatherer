@@ -1,5 +1,5 @@
 using Entities.Models;
-using NhlDataCollection.DataAccess;
+using DataAccess.GamesRepository;
 using Microsoft.Extensions.Logging;
 
 namespace NhlDataCollection.DataGetter

@@ -2,7 +2,7 @@
 using System.Data.SqlClient;
 using Entities.Models;
 
-namespace NhlDataCollection.DataAccess
+namespace DataAccess.GamesRepository
 {
     public class GamesDA : IGamesDA
     {

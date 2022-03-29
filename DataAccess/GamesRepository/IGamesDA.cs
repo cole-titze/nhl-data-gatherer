@@ -1,7 +1,7 @@
 using Entities.Models;
 using System.Data;
 
-namespace NhlDataCollection.DataAccess
+namespace DataAccess.GamesRepository
 {
     public interface IGamesDA
     {

@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
-using NhlDataCollection.DataAccess;
+using DataAccess.GamesRepository;
 using NhlDataCollection.DataGetter;
 
 namespace DataCollectionTrigger
@@ -12,8 +12,8 @@ namespace DataCollectionTrigger
         [FunctionName("DataCollectionTrigger")]
         public async Task Run([TimerTrigger("0 0 0 * * *")]TimerInfo myTimer, ILogger logger)
         {
-            // Run Application
-            logger.LogInformation("Starting App");
+            // Run Data Collection
+            logger.LogInformation("Starting Data Collection");
             string connectionString = System.Environment.GetEnvironmentVariable("GamesDatabase", EnvironmentVariableTarget.Process);
 
             var gameParser = new GameParser();
@@ -22,7 +22,12 @@ namespace DataCollectionTrigger
             var endYear = GetEndSeason(DateTime.UtcNow);
             var dataGetter = new DataGetter(gameParser, requestMaker, dataAccess, endYear, logger);
             await dataGetter.GetData();
-            logger.LogInformation("Completed!");
+            logger.LogInformation("Completed Data Collection");
+
+            // Run Data Cleaning
+            logger.LogInformation("Starting Data Cleaning");
+
+            logger.LogInformation("Completed Data Cleaning");
         }
 
         // Season spans 2 years (2021-2022) but we only want the start year of the season
