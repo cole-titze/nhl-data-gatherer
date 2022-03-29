@@ -2,7 +2,7 @@
 using System.Data.SqlClient;
 using Entities.Models;
 
-namespace NhlDataCollection.DataAccess
+namespace DataAccess.GamesRepository
 {
     public class GamesDA : IGamesDA
     {
@@ -50,7 +50,6 @@ namespace NhlDataCollection.DataAccess
 
                     gameTable.Rows.Add(newRow);
                 }
-                new SqlCommandBuilder(da);
                 da.Update(gameTable);
             }
         }
@@ -76,6 +75,11 @@ namespace NhlDataCollection.DataAccess
                 return new Game();
 
             return game;
+        }
+
+        public List<Game> GetCachedGames()
+        {
+            return _gamesForYear;
         }
 
         public Game GetGameById(int id)

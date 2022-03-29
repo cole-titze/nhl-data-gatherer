@@ -1,5 +1,6 @@
+using Entities;
 using Entities.Models;
-using NhlDataCollection.DataAccess;
+using DataAccess.GamesRepository;
 using Microsoft.Extensions.Logging;
 
 namespace NhlDataCollection.DataGetter
@@ -11,27 +12,26 @@ namespace NhlDataCollection.DataGetter
         private IGamesDA gamesDataAccess;
         private const int cutOffCount = 300;
         private const int _maxGameId = 1400;
-        private readonly int startYear = 2012;
-        private readonly int endYear;
+        private readonly DateRange _yearRange;
         private readonly ILogger _logger;
 
-        public DataGetter(IGameParser gameParser, IRequestMaker requestMaker, IGamesDA gamesDA, int endingYear, ILogger logger)
+        public DataGetter(IGameParser gameParser, IRequestMaker requestMaker, IGamesDA gamesDA, DateRange yearRange, ILogger logger)
 		{
             GameParser = gameParser;
             RequestMaker = requestMaker;
             gamesDataAccess = gamesDA;
-            endYear = endingYear;
+            _yearRange = yearRange;
             _logger = logger;
 		}
 		public async Task GetData()
         {
-            for (int year = startYear; year <= endYear; year++)
+            for (int year = _yearRange.StartYear; year <= _yearRange.EndYear; year++)
             {
                 _logger.LogInformation("Getting Year: " + year.ToString());
-                var gameCount = GetStoredGameCountForSeason(year);
+                var gameCount = gamesDataAccess.GetGameCountBySeason(year);
                 // Skip if data is already in db and not the current year
                 // If current year data could be incomplete so run anyways
-                if (gameCount > cutOffCount && year < endYear)
+                if (gameCount > cutOffCount && year < _yearRange.EndYear)
                     continue;
 
                 gamesDataAccess.CacheSeasonOfGames(year);
@@ -39,11 +39,6 @@ namespace NhlDataCollection.DataGetter
                 // Add a years worth of games to db
                 gamesDataAccess.AddGames(gameList);
             }
-        }
-
-        private int GetStoredGameCountForSeason(int year)
-        {
-            return gamesDataAccess.GetGameCountBySeason(year);
         }
 
         private async Task<List<Game>> GetGamesForSeason(int season)

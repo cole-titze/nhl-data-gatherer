@@ -1,7 +1,7 @@
 using Entities.Models;
 using System.Data;
 
-namespace NhlDataCollection.DataAccess
+namespace DataAccess.GamesRepository
 {
     public interface IGamesDA
     {
@@ -12,5 +12,6 @@ namespace NhlDataCollection.DataAccess
         int GetGameCountBySeason(int year);
         void CacheSeasonOfGames(int year);
         Game GetCachedGameById(int id);
+        List<Game> GetCachedGames();
     }
 }
