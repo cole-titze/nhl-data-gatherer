@@ -20,6 +20,9 @@ namespace DataAccess.GamesRepository
             using (var da = new SqlDataAdapter("SELECT * FROM Game WHERE 0 = 1", _connectionString))
             {
                 da.Fill(gameTable);
+                SqlCommandBuilder cb = new SqlCommandBuilder(da);
+                da.UpdateCommand = cb.GetUpdateCommand();
+
                 foreach (var game in games)
                 {
                     var newRow = gameTable.NewRow();
