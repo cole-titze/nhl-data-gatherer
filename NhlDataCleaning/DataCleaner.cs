@@ -2,6 +2,7 @@
 using Entities.Models;
 using Microsoft.Extensions.Logging;
 using DataAccess.GamesRepository;
+using System.Linq;
 
 namespace NhlDataCleaning
 {
@@ -24,11 +25,25 @@ namespace NhlDataCleaning
                 _logger.LogInformation("Cleaning Year: " + year.ToString());
                 _gamesDA.CacheSeasonOfGames(year);
                 var seasonsGames = _gamesDA.GetCachedGames();
-                List<CleanedGame> games = CleanGames(seasonsGames);
+                var games = CleanGames(seasonsGames);
             }
         }
         private List<CleanedGame> CleanGames(List<Game> seasonsGames)
         {
+            var cleanedGames = new List<CleanedGame>();
+            seasonsGames.OrderBy(i => i.id).Reverse();
+            foreach(var game in seasonsGames)
+            {
+                var cleanedGame = new CleanedGame()
+                {
+                    id = game.id,
+                    homeTeamName = game.homeTeamName,
+                    awayTeamName = game.awayTeamName,
+                    seasonStartYear = game.seasonStartYear,
+                };
+            }
+
+
             throw new NotImplementedException();
         }
     }
