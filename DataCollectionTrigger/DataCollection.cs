@@ -33,6 +33,7 @@ namespace DataCollectionTrigger
             // Run Data Cleaning
             logger.LogInformation("Starting Data Cleaning");
             var dataCleaner = new DataCleaner(logger, dataAccess, dateRange);
+            dataCleaner.CleanData();
             logger.LogInformation("Completed Data Cleaning");
         }
 

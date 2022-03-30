@@ -1,4 +1,5 @@
 ﻿using Entities;
+using Entities.Models;
 using Microsoft.Extensions.Logging;
 using DataAccess.GamesRepository;
 
@@ -23,8 +24,12 @@ namespace NhlDataCleaning
                 _logger.LogInformation("Cleaning Year: " + year.ToString());
                 _gamesDA.CacheSeasonOfGames(year);
                 var seasonsGames = _gamesDA.GetCachedGames();
-
+                List<CleanedGame> games = CleanGames(seasonsGames);
             }
+        }
+        private List<CleanedGame> CleanGames(List<Game> seasonsGames)
+        {
+            throw new NotImplementedException();
         }
     }
 }
