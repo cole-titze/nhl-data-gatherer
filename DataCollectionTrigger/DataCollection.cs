@@ -12,7 +12,7 @@ namespace DataCollectionTrigger
     public class DataCollection
     {
         [FunctionName("DataCollectionTrigger")]
-        public async Task Run([TimerTrigger("0 0 0 * * *")]TimerInfo myTimer, ILogger logger)
+        public async Task Run([TimerTrigger("20 37 23 * * *")]TimerInfo myTimer, ILogger logger)
         {
             // Run Data Collection
             logger.LogInformation("Starting Data Collection");
