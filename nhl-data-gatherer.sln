@@ -11,9 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataCollectionTrigger", "Da
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "UnitTests\UnitTests.csproj", "{2032B997-4463-4746-9ADA-627E2A853B2F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NhlDataCleaning", "NhlDataCleaning\NhlDataCleaning.csproj", "{8ED98DD9-D6D8-438A-940F-2BC45078401A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NhlDataCleaning", "NhlDataCleaning\NhlDataCleaning.csproj", "{8ED98DD9-D6D8-438A-940F-2BC45078401A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "DataAccess\DataAccess.csproj", "{6F8438F2-7BF8-4447-AD02-FDA21C1287ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccess", "DataAccess\DataAccess.csproj", "{6F8438F2-7BF8-4447-AD02-FDA21C1287ED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalRunning", "LocalRunning\LocalRunning.csproj", "{869F1673-2EBE-4538-9C78-A13A6E65B8CB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{6F8438F2-7BF8-4447-AD02-FDA21C1287ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6F8438F2-7BF8-4447-AD02-FDA21C1287ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6F8438F2-7BF8-4447-AD02-FDA21C1287ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{869F1673-2EBE-4538-9C78-A13A6E65B8CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{869F1673-2EBE-4538-9C78-A13A6E65B8CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{869F1673-2EBE-4538-9C78-A13A6E65B8CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{869F1673-2EBE-4538-9C78-A13A6E65B8CB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

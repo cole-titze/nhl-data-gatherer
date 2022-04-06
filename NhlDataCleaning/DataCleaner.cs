@@ -90,7 +90,6 @@ namespace NhlDataCleaning
 
             return cleanedGames;
         }
-        // Make list extension
         private List<Game> GetTeamGames(List<Game> seasonsGames, string teamName, int id)
         {
             // Get games that happened before current game and include the team
