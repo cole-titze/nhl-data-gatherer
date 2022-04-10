@@ -36,10 +36,13 @@ namespace NhlDataCleaning
         }
         private List<CleanedGame> CleanGames(List<Game> seasonsGames)
         {
+            _cleanedGamesDA.CacheGameIds();
             var cleanedGames = new List<CleanedGame>();
             seasonsGames = seasonsGames.OrderBy(i => i.id).Reverse().ToList();
             foreach(var game in seasonsGames)
             {
+                if (GameExists(game))
+                    continue;
                 var homeGames = GetTeamGames(seasonsGames, game.homeTeamName, game.id);
                 var awayGames = GetTeamGames(seasonsGames, game.awayTeamName, game.id);
                 var cleanedGame = new CleanedGame()
@@ -93,6 +96,12 @@ namespace NhlDataCleaning
 
             return cleanedGames;
         }
+
+        private bool GameExists(Game game)
+        {
+            return _cleanedGamesDA.GetIfGameExistsByIdFromCache(game.id);
+        }
+
         private List<Game> GetTeamGames(List<Game> seasonsGames, string teamName, int id)
         {
             // Get games that happened before current game and include the team

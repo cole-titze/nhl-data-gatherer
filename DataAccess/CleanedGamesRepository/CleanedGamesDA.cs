@@ -7,10 +7,12 @@ namespace DataAccess.CleanedGamesRepository
     public class CleanedGamesDA : ICleanedGamesDA
     {
         private string _connectionString;
+        private List<int> _cachedGameIds;
 
         public CleanedGamesDA(string connectionString)
         {
             _connectionString = connectionString;
+            _cachedGameIds = new List<int>();
         }
 
         public void AddGames(List<CleanedGame> games)
@@ -71,6 +73,27 @@ namespace DataAccess.CleanedGamesRepository
                 da.Update(gameTable);
             }
 
+        }
+
+        public void CacheGameIds()
+        {
+            var dataTable = new DataTable();
+            using (var da = new SqlDataAdapter($"SELECT id FROM CleanedGame", _connectionString))
+            {
+                da.Fill(dataTable);
+            }
+            foreach (DataRow row in dataTable.Rows)
+            {
+                _cachedGameIds.Add(Convert.ToInt32(row["id"]));
+            }
+        }
+
+        public bool GetIfGameExistsByIdFromCache(int id)
+        {
+            int gameExists = _cachedGameIds.FirstOrDefault(i => i == id);
+            if(gameExists == 0)
+                return false;
+            return true;
         }
     }
 }
