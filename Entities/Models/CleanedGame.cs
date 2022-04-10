@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Entities.Models
+﻿namespace Entities.Models
 {
     // Recent means within last few games ex. 5 games (decided in appsettings)
     public class CleanedGame

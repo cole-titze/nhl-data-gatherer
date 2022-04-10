@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using DataAccess.GamesRepository;
+using DataAccess.CleanedGamesRepository;
 using NhlDataCollection.DataGetter;
 using Entities;
 using NhlDataCleaning;
@@ -12,7 +13,7 @@ namespace DataCollectionTrigger
     public class DataCollection
     {
         [FunctionName("DataCollectionTrigger")]
-        public async Task Run([TimerTrigger("20 37 23 * * *")]TimerInfo myTimer, ILogger logger)
+        public async Task Run([TimerTrigger("0 0 3 * * *")]TimerInfo myTimer, ILogger logger)
         {
             string connectionString = System.Environment.GetEnvironmentVariable("GamesDatabase", EnvironmentVariableTarget.Process);
             await Main(logger, connectionString);
@@ -25,6 +26,7 @@ namespace DataCollectionTrigger
             var gameParser = new GameParser();
             var requestMaker = new RequestMaker();
             var dataAccess = new GamesDA(connectionString);
+            var cleanDataAccess = new CleanedGamesDA(connectionString);
             var dateRange = new DateRange()
             {
                 StartYear = 2012,
@@ -36,7 +38,7 @@ namespace DataCollectionTrigger
 
             // Run Data Cleaning
             logger.LogInformation("Starting Data Cleaning");
-            var dataCleaner = new DataCleaner(logger, dataAccess, dateRange);
+            var dataCleaner = new DataCleaner(logger, dataAccess, cleanDataAccess, dateRange);
             dataCleaner.CleanData();
             logger.LogInformation("Completed Data Cleaning");
         }

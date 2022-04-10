@@ -2,7 +2,7 @@
 using Entities.Models;
 using Microsoft.Extensions.Logging;
 using DataAccess.GamesRepository;
-using System.Linq;
+using DataAccess.CleanedGamesRepository;
 using NhlDataCleaning.Mappers;
 
 namespace NhlDataCleaning
@@ -10,16 +10,18 @@ namespace NhlDataCleaning
     public class DataCleaner
     {
         private IGamesDA _gamesDA;
+        private ICleanedGamesDA _cleanedGamesDA;
         private readonly ILogger _logger;
         private readonly DateRange _yearRange;
         private const int RECENT_GAMES = 5;
         private const int GAMES_TO_EXCLUDE = 15;
 
-        public DataCleaner(ILogger logger, IGamesDA gamesDa, DateRange dateRange)
+        public DataCleaner(ILogger logger, IGamesDA gamesDa, ICleanedGamesDA cleanedDA, DateRange dateRange)
         {
             _logger = logger;
             _gamesDA = gamesDa;
             _yearRange = dateRange;
+            _cleanedGamesDA = cleanedDA;
         }
         public void CleanData()
         {
@@ -29,6 +31,7 @@ namespace NhlDataCleaning
                 _gamesDA.CacheSeasonOfGames(year);
                 var seasonsGames = _gamesDA.GetCachedGames();
                 var games = CleanGames(seasonsGames);
+                _cleanedGamesDA.AddGames(games);
             }
         }
         private List<CleanedGame> CleanGames(List<Game> seasonsGames)

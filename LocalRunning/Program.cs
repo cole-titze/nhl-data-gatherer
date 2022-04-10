@@ -1,5 +1,6 @@
 ﻿using DataCollectionTrigger;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 var collector = new DataCollection();
@@ -15,6 +16,7 @@ var sp = collection.BuildServiceProvider();
 using (var scope = sp.CreateScope())
 {
     var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-    string connectionString = System.Environment.GetEnvironmentVariable("GamesDatabase", EnvironmentVariableTarget.Process);
-    await collector.Main(logger);
+    var config = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+    string connectionString = config.GetConnectionString("GamesDatabase");
+    await collector.Main(logger, connectionString);
 }
