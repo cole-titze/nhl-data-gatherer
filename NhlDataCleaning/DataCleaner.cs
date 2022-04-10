@@ -37,7 +37,7 @@ namespace NhlDataCleaning
         private List<CleanedGame> CleanGames(List<Game> seasonsGames)
         {
             var cleanedGames = new List<CleanedGame>();
-            var seasonGames = seasonsGames.OrderBy(i => i.id).Reverse().ToList();
+            seasonsGames = seasonsGames.OrderBy(i => i.id).Reverse().ToList();
             foreach(var game in seasonsGames)
             {
                 var homeGames = GetTeamGames(seasonsGames, game.homeTeamName, game.id);
