@@ -32,6 +32,7 @@ namespace DataAccess.CleanedGamesRepository
                     newRow["homeTeamName"] = game.homeTeamName;
                     newRow["awayTeamName"] = game.awayTeamName;
                     newRow["seasonStartYear"] = game.seasonStartYear;
+                    newRow["gameDate"] = game.gameDate;
                     newRow["homeWinRatio"] = game.homeWinRatio;
                     newRow["homeRecentWinRatio"] = game.homeRecentWinRatio;
                     newRow["homeRecentGoalsAvg"] = game.homeRecentGoalsAvg;
@@ -52,7 +53,7 @@ namespace DataAccess.CleanedGamesRepository
                     newRow["awayWinRatio"] = game.awayWinRatio;
                     newRow["awayRecentWinRatio"] = game.awayRecentWinRatio;
                     newRow["awayRecentGoalsAvg"] = game.awayRecentGoalsAvg;
-                    newRow["awayRecentConcededGoals"] = game.awayRecentConcededGoals;
+                    newRow["awayRecentConcededGoalsAvg"] = game.awayRecentConcededGoalsAvg;
                     newRow["awayRecentSogAvg"] = game.awayRecentSogAvg;
                     newRow["awayRecentPpgAvg"] = game.awayRecentPpgAvg;
                     newRow["awayRecentHitsAvg"] = game.awayRecentHitsAvg;

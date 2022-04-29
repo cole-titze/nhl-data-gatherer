@@ -13,7 +13,7 @@ namespace DataCollectionTrigger
     public class DataCollection
     {
         [FunctionName("DataCollectionTrigger")]
-        public async Task Run([TimerTrigger("0 0 3 * * *")]TimerInfo myTimer, ILogger logger)
+        public async Task Run([TimerTrigger("0 0 5 * * *")]TimerInfo myTimer, ILogger logger)
         {
             string connectionString = System.Environment.GetEnvironmentVariable("GamesDatabase", EnvironmentVariableTarget.Process);
             await Main(logger, connectionString);

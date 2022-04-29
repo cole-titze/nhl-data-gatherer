@@ -51,6 +51,7 @@ namespace NhlDataCleaning
                     homeTeamName = game.homeTeamName,
                     awayTeamName = game.awayTeamName,
                     seasonStartYear = game.seasonStartYear,
+                    gameDate = game.gameDate,
 
                     homeWinRatio = Cleaner.GetWinRatioOfRecentGames(homeGames, game.homeTeamName, homeGames.Count()),
                     homeRecentWinRatio = Cleaner.GetWinRatioOfRecentGames(homeGames, game.homeTeamName, RECENT_GAMES),
@@ -75,7 +76,7 @@ namespace NhlDataCleaning
                     awayGoalsAvg = Cleaner.GetGoalsAvgOfRecentGames(awayGames, game.awayTeamName, awayGames.Count()),
                     awayRecentGoalsAvg = Cleaner.GetGoalsAvgOfRecentGames(awayGames, game.awayTeamName, RECENT_GAMES),
                     awayConcededGoalsAvg = Cleaner.GetConcededGoalsAvgOfRecentGames(awayGames, game.awayTeamName, awayGames.Count()),
-                    awayRecentConcededGoals = Cleaner.GetConcededGoalsAvgOfRecentGames(awayGames, game.awayTeamName, RECENT_GAMES),
+                    awayRecentConcededGoalsAvg = Cleaner.GetConcededGoalsAvgOfRecentGames(awayGames, game.awayTeamName, RECENT_GAMES),
                     awayRecentSogAvg = Cleaner.GetSogAvgOfRecentGames(awayGames, game.awayTeamName, RECENT_GAMES),
                     awayRecentBlockedShotsAvg = Cleaner.GetBlockedShotsAvgOfRecentGames(awayGames, game.awayTeamName, RECENT_GAMES),
                     awayRecentPpgAvg = Cleaner.GetPpgAvgOfRecentGames(awayGames, game.awayTeamName, RECENT_GAMES),
