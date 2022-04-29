@@ -7,6 +7,7 @@
         public string homeTeamName { get; set; } = string.Empty;
         public string awayTeamName { get; set; } = string.Empty;
         public int seasonStartYear { get; set; }
+        public DateTime gameDate { get; set; }
         public double homeWinRatio { get; set; }
         public double homeRecentWinRatio { get; set; }
         public double homeRecentGoalsAvg { get; set; }
@@ -27,7 +28,7 @@
         public double awayWinRatio { get; set; }
         public double awayRecentWinRatio { get; set; }
         public double awayRecentGoalsAvg { get; set; }
-        public double awayRecentConcededGoals { get; set; }
+        public double awayRecentConcededGoalsAvg { get; set; }
         public double awayRecentSogAvg { get; set; }
         public double awayRecentPpgAvg { get; set; }
         public double awayRecentHitsAvg { get; set; }
