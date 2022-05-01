@@ -56,6 +56,30 @@ namespace DataAccess.GamesRepository
                 da.Update(gameTable);
             }
         }
+        public void AddFutureGames(List<FutureGame> games)
+        {
+            var gameTable = new DataTable();
+
+            using (var da = new SqlDataAdapter("SELECT * FROM FutureGame WHERE 0 = 1", _connectionString))
+            {
+                da.Fill(gameTable);
+                SqlCommandBuilder cb = new SqlCommandBuilder(da);
+                da.UpdateCommand = cb.GetUpdateCommand();
+
+                foreach (var game in games)
+                {
+                    var newRow = gameTable.NewRow();
+                    newRow["id"] = game.id;
+                    newRow["homeTeamName"] = game.homeTeamName;
+                    newRow["awayTeamName"] = game.awayTeamName;
+                    newRow["gameDate"] = game.gameDate;
+
+                    gameTable.Rows.Add(newRow);
+                }
+                da.Update(gameTable);
+            }
+        }
+
 
         public void CacheSeasonOfGames(int year)
         {

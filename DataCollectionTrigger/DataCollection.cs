@@ -24,7 +24,9 @@ namespace DataCollectionTrigger
             logger.LogInformation("Starting Data Collection");
 
             var gameParser = new GameParser();
-            var requestMaker = new RequestMaker();
+            var scheduleParser = new ScheduleParser();
+            var gameRequestMaker = new GameRequestMaker();
+            var scheduleRequestMaker = new ScheduleRequestMaker();
             var dataAccess = new GamesDA(connectionString);
             var cleanDataAccess = new CleanedGamesDA(connectionString);
             var dateRange = new DateRange()
@@ -32,7 +34,7 @@ namespace DataCollectionTrigger
                 StartYear = 2012,
                 EndYear = GetEndSeason(DateTime.UtcNow),
             };
-            var dataGetter = new DataGetter(gameParser, requestMaker, dataAccess, dateRange, logger);
+            var dataGetter = new DataGetter(gameParser, scheduleParser, scheduleRequestMaker, gameRequestMaker, dataAccess, dateRange, logger);
             await dataGetter.GetData();
             logger.LogInformation("Completed Data Collection");
 

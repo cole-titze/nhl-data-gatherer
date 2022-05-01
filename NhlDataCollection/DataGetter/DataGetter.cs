@@ -8,17 +8,21 @@ namespace NhlDataCollection.DataGetter
     public class DataGetter
 	{
         private IGameParser GameParser;
-        private IRequestMaker RequestMaker;
+        private IScheduleParser ScheduleParser;
+        private IGameRequestMaker GameRequestMaker;
+        private IScheduleRequestMaker ScheduleRequestMaker;
         private IGamesDA gamesDataAccess;
         private const int cutOffCount = 300;
         private const int _maxGameId = 1400;
         private readonly DateRange _yearRange;
         private readonly ILogger _logger;
 
-        public DataGetter(IGameParser gameParser, IRequestMaker requestMaker, IGamesDA gamesDA, DateRange yearRange, ILogger logger)
+        public DataGetter(IGameParser gameParser, IScheduleParser scheduleParser, IScheduleRequestMaker scheduleRequestMaker, IGameRequestMaker gameRequestMaker, IGamesDA gamesDA, DateRange yearRange, ILogger logger)
 		{
             GameParser = gameParser;
-            RequestMaker = requestMaker;
+            ScheduleParser = scheduleParser;
+            GameRequestMaker = gameRequestMaker;
+            ScheduleRequestMaker = scheduleRequestMaker;
             gamesDataAccess = gamesDA;
             _yearRange = yearRange;
             _logger = logger;
@@ -39,6 +43,20 @@ namespace NhlDataCollection.DataGetter
                 // Add a years worth of games to db
                 gamesDataAccess.AddGames(gameList);
             }
+            var futureGames = await GetFutureGames();
+            gamesDataAccess.AddFutureGames(futureGames);
+        }
+        private async Task<List<FutureGame>> GetFutureGames()
+        {
+            List<FutureGame> gameList = new List<FutureGame>();
+            var tomorrow = DateTime.Now.AddDays(1);
+            var query = ScheduleRequestMaker.CreateRequestQuery(tomorrow);
+            var response = await ScheduleRequestMaker.MakeRequest(query);
+
+            if (response.IsSuccessStatusCode)
+                gameList = await ScheduleParser.BuildFutureGames(response);
+
+            return gameList;
         }
 
         private async Task<List<Game>> GetGamesForSeason(int season)
@@ -51,8 +69,8 @@ namespace NhlDataCollection.DataGetter
                 if (recordExists)
                     continue;
 
-                var query = RequestMaker.CreateRequestQuery(season, id);
-                var response = await RequestMaker.MakeRequest(query);
+                var query = GameRequestMaker.CreateRequestQuery(season, id);
+                var response = await GameRequestMaker.MakeRequest(query);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -66,7 +84,7 @@ namespace NhlDataCollection.DataGetter
 
         private bool CheckIfRecordExistsInDb(int year, int id)
         {
-            Game game = gamesDataAccess.GetCachedGameById(RequestMaker.BuildId(year, id));
+            Game game = gamesDataAccess.GetCachedGameById(GameRequestMaker.BuildId(year, id));
 
             if(game.id == -1)
                 return false;

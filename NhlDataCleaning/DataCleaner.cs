@@ -35,7 +35,7 @@ namespace NhlDataCleaning
                 _cleanedGamesDA.AddGames(games);
             }
             // Get and create future game records
-
+            
         }
         private List<CleanedGame> CleanGames(List<Game> seasonsGames)
         {
