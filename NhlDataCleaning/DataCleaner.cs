@@ -25,6 +25,7 @@ namespace NhlDataCleaning
         }
         public void CleanData()
         {
+            // Get and clean games
             for (int year = _yearRange.StartYear; year <= _yearRange.EndYear; year++)
             {
                 _logger.LogInformation("Cleaning Year: " + year.ToString());
@@ -33,6 +34,8 @@ namespace NhlDataCleaning
                 var games = CleanGames(seasonsGames);
                 _cleanedGamesDA.AddGames(games);
             }
+            // Get and create future game records
+
         }
         private List<CleanedGame> CleanGames(List<Game> seasonsGames)
         {
