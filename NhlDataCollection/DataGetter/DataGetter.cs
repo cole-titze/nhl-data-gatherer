@@ -3,6 +3,7 @@ using Entities.Models;
 using DataAccess.GamesRepository;
 using Microsoft.Extensions.Logging;
 using DataAccess.FutureGames;
+using DataAccess.PredictedGames;
 
 namespace NhlDataCollection.DataGetter
 {
@@ -12,6 +13,7 @@ namespace NhlDataCollection.DataGetter
         private IScheduleParser _scheduleParser;
         private IGameRequestMaker _gameRequestMaker;
         private IScheduleRequestMaker _scheduleRequestMaker;
+        private IPredictedGamesDA _predictedGamesDA;
         private IGamesDA _gamesDA;
         private IFutureGamesDA _futureGamesDA;
         private const int cutOffCount = 300;
@@ -20,7 +22,7 @@ namespace NhlDataCollection.DataGetter
         private readonly ILogger _logger;
         private readonly int _daysToAdd = 0;
 
-        public DataGetter(IGameParser gameParser, IScheduleParser scheduleParser, IScheduleRequestMaker scheduleRequestMaker, IGameRequestMaker gameRequestMaker, IGamesDA gamesDA, IFutureGamesDA futureGamesDA, DateRange yearRange, ILogger logger)
+        public DataGetter(IGameParser gameParser, IScheduleParser scheduleParser, IScheduleRequestMaker scheduleRequestMaker, IGameRequestMaker gameRequestMaker, IGamesDA gamesDA, IFutureGamesDA futureGamesDA, IPredictedGamesDA predictedGamesDA, DateRange yearRange, ILogger logger)
 		{
             _gameParser = gameParser;
             _scheduleParser = scheduleParser;
@@ -30,6 +32,7 @@ namespace NhlDataCollection.DataGetter
             _yearRange = yearRange;
             _logger = logger;
             _futureGamesDA = futureGamesDA;
+            _predictedGamesDA = predictedGamesDA;
 		}
 		public async Task GetData()
         {
@@ -47,6 +50,7 @@ namespace NhlDataCollection.DataGetter
             }
             var futureGames = await GetFutureGames();
             _futureGamesDA.AddFutureGames(futureGames);
+            _predictedGamesDA.AddPredictedGames(futureGames);
         }
         private async Task<List<FutureGame>> GetFutureGames()
         {
