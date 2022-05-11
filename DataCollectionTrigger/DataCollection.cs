@@ -7,6 +7,8 @@ using DataAccess.CleanedGamesRepository;
 using NhlDataCollection.DataGetter;
 using Entities;
 using NhlDataCleaning;
+using DataAccess.FutureGames;
+using DataAccess.FutureCleanedGame;
 
 namespace DataCollectionTrigger
 {
@@ -24,21 +26,25 @@ namespace DataCollectionTrigger
             logger.LogInformation("Starting Data Collection");
 
             var gameParser = new GameParser();
-            var requestMaker = new RequestMaker();
-            var dataAccess = new GamesDA(connectionString);
-            var cleanDataAccess = new CleanedGamesDA(connectionString);
+            var scheduleParser = new ScheduleParser();
+            var gameRequestMaker = new GameRequestMaker();
+            var scheduleRequestMaker = new ScheduleRequestMaker();
+            var gamesDA = new GamesDA(connectionString);
+            var cleanGamesDA = new CleanedGamesDA(connectionString);
+            var futureGamesDA = new FutureGamesDA(connectionString);
+            var futureCleanedGamesDA = new FutureCleanedGamesDA(connectionString);
             var dateRange = new DateRange()
             {
                 StartYear = 2012,
                 EndYear = GetEndSeason(DateTime.UtcNow),
             };
-            var dataGetter = new DataGetter(gameParser, requestMaker, dataAccess, dateRange, logger);
+            var dataGetter = new DataGetter(gameParser, scheduleParser, scheduleRequestMaker, gameRequestMaker, gamesDA, futureGamesDA, dateRange, logger);
             await dataGetter.GetData();
             logger.LogInformation("Completed Data Collection");
 
             // Run Data Cleaning
             logger.LogInformation("Starting Data Cleaning");
-            var dataCleaner = new DataCleaner(logger, dataAccess, cleanDataAccess, dateRange);
+            var dataCleaner = new DataCleaner(logger, gamesDA, futureGamesDA, cleanGamesDA, futureCleanedGamesDA, dateRange);
             dataCleaner.CleanData();
             logger.LogInformation("Completed Data Cleaning");
         }

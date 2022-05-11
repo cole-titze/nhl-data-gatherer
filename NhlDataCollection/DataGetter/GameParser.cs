@@ -47,14 +47,9 @@ namespace NhlDataCollection.DataGetter
                 awayGiveaways = (int)awayTeam.giveaways,
                 winner = (int)GetWinner((int)homeTeam.goals, (int)awayTeam.goals),
                 seasonStartYear = GetSeason((string)message.gameData.game.season),
-                gameDate = GetDate((string)message.gameData.datetime.dateTime),
+                gameDate = DateTime.Parse((string)message.gameData.datetime.dateTime),
             };
             return game;
-        }
-
-        private DateTime GetDate(string dateTime)
-        {
-            return DateTime.Parse(dateTime);
         }
 
         private int GetSeason(string season)

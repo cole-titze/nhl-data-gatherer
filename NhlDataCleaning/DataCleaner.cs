@@ -4,35 +4,55 @@ using Microsoft.Extensions.Logging;
 using DataAccess.GamesRepository;
 using DataAccess.CleanedGamesRepository;
 using NhlDataCleaning.Mappers;
+using DataAccess.FutureCleanedGame;
+using DataAccess.FutureGames;
 
 namespace NhlDataCleaning
 {
     public class DataCleaner
     {
         private IGamesDA _gamesDA;
+        private IFutureGamesDA _futureGamesDA;
         private ICleanedGamesDA _cleanedGamesDA;
+        private IFutureCleanedGamesDA _futureCleanedGamesDA;
         private readonly ILogger _logger;
         private readonly DateRange _yearRange;
         private const int RECENT_GAMES = 5;
         private const int GAMES_TO_EXCLUDE = 15;
 
-        public DataCleaner(ILogger logger, IGamesDA gamesDa, ICleanedGamesDA cleanedDA, DateRange dateRange)
+        public DataCleaner(ILogger logger, IGamesDA gamesDa,IFutureGamesDA futureGamesDA, ICleanedGamesDA cleanedDA, IFutureCleanedGamesDA futureCleanedDA, DateRange dateRange)
         {
             _logger = logger;
             _gamesDA = gamesDa;
+            _futureGamesDA = futureGamesDA;
             _yearRange = dateRange;
             _cleanedGamesDA = cleanedDA;
+            _futureCleanedGamesDA = futureCleanedDA;
         }
         public void CleanData()
         {
+            List<CleanedGame> games;
+            List<Game> seasonsGames;
+            // Get and clean games
             for (int year = _yearRange.StartYear; year <= _yearRange.EndYear; year++)
             {
                 _logger.LogInformation("Cleaning Year: " + year.ToString());
                 _gamesDA.CacheSeasonOfGames(year);
-                var seasonsGames = _gamesDA.GetCachedGames();
-                var games = CleanGames(seasonsGames);
+                seasonsGames = _gamesDA.GetCachedGames();
+                games = CleanGames(seasonsGames);
                 _cleanedGamesDA.AddGames(games);
             }
+            // Get and create future game records
+            // TODO: I'm redoing the last seasons work here. Should be included above or something
+            var futureGames = _futureGamesDA.GetFutureGames();
+            seasonsGames = _gamesDA.GetCachedGames();
+            foreach(var game in futureGames)
+            {
+                var mappedGame = GameMapper.FutureGameToGame(game);
+                seasonsGames.Add(mappedGame);
+            }
+            games = CleanGames(seasonsGames);
+            _futureCleanedGamesDA.AddFutureGames(games);
         }
         private List<CleanedGame> CleanGames(List<Game> seasonsGames)
         {

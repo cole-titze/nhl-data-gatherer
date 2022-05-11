@@ -15,9 +15,6 @@
     <None Remove="Microsoft.Extensions.Logging" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="DataGetter\" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
     <ProjectReference Include="..\Entities\Entities.csproj" />
   </ItemGroup>

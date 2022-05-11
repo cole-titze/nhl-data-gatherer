@@ -2,7 +2,7 @@ using System.Net.Http.Headers;
 
 namespace NhlDataCollection.DataGetter
 {
-    public class RequestMaker : IRequestMaker
+    public class GameRequestMaker : IGameRequestMaker
 	{
         private const string _seasonType = "02";
         private const string _url = "http://statsapi.web.nhl.com/api/v1/game/";

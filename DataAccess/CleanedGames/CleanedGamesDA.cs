@@ -78,6 +78,7 @@ namespace DataAccess.CleanedGamesRepository
 
         public void CacheGameIds()
         {
+            _cachedGameIds.Clear();
             var dataTable = new DataTable();
             using (var da = new SqlDataAdapter($"SELECT id FROM CleanedGame", _connectionString))
             {
