@@ -25,17 +25,28 @@ namespace NhlDataCleaning
         }
         public void CleanData()
         {
+            List<CleanedGame> games;
+            List<Game> seasonsGames;
             // Get and clean games
             for (int year = _yearRange.StartYear; year <= _yearRange.EndYear; year++)
             {
                 _logger.LogInformation("Cleaning Year: " + year.ToString());
                 _gamesDA.CacheSeasonOfGames(year);
-                var seasonsGames = _gamesDA.GetCachedGames();
-                var games = CleanGames(seasonsGames);
+                seasonsGames = _gamesDA.GetCachedGames();
+                games = CleanGames(seasonsGames);
                 _cleanedGamesDA.AddGames(games);
             }
             // Get and create future game records
-            
+            // TODO: I'm redoing the last seasons work here. Should be included above or something
+            var futureGames = _gamesDA.GetFutureGames();
+            seasonsGames = _gamesDA.GetCachedGames();
+            foreach(var game in futureGames)
+            {
+                var mappedGame = GameMapper.FutureGameToGame(game);
+                seasonsGames.Add(mappedGame);
+            }
+            games = CleanGames(seasonsGames);
+            _cleanedGamesDA.AddFutureGames(games);
         }
         private List<CleanedGame> CleanGames(List<Game> seasonsGames)
         {

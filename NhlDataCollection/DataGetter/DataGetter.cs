@@ -16,6 +16,7 @@ namespace NhlDataCollection.DataGetter
         private const int _maxGameId = 1400;
         private readonly DateRange _yearRange;
         private readonly ILogger _logger;
+        private readonly int _daysToAdd = 0;
 
         public DataGetter(IGameParser gameParser, IScheduleParser scheduleParser, IScheduleRequestMaker scheduleRequestMaker, IGameRequestMaker gameRequestMaker, IGamesDA gamesDA, DateRange yearRange, ILogger logger)
 		{
@@ -34,7 +35,7 @@ namespace NhlDataCollection.DataGetter
                 _logger.LogInformation("Getting Year: " + year.ToString());
                 var gameCount = gamesDataAccess.GetGameCountBySeason(year);
                 // Skip if data is already in db and not the current year
-                // If current year data could be incomplete so run anyways
+                // If current year, data could be incomplete so run anyways
                 if (gameCount > cutOffCount && year < _yearRange.EndYear)
                     continue;
 
@@ -49,7 +50,7 @@ namespace NhlDataCollection.DataGetter
         private async Task<List<FutureGame>> GetFutureGames()
         {
             List<FutureGame> gameList = new List<FutureGame>();
-            var tomorrow = DateTime.Now.AddDays(1);
+            var tomorrow = DateTime.Now.AddDays(_daysToAdd);
             var query = ScheduleRequestMaker.CreateRequestQuery(tomorrow);
             var response = await ScheduleRequestMaker.MakeRequest(query);
 

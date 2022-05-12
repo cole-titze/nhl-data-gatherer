@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
 using Entities.Models;
+using System.Linq;
 
 namespace DataAccess.GamesRepository
 {
@@ -8,6 +9,7 @@ namespace DataAccess.GamesRepository
     {
         private string _connectionString;
         private List<Game> _gamesForYear = new List<Game>();
+        private List<int> _futureGames = new List<int>();
 
         public GamesDA(string connectionString)
         {
@@ -59,7 +61,7 @@ namespace DataAccess.GamesRepository
         public void AddFutureGames(List<FutureGame> games)
         {
             var gameTable = new DataTable();
-
+            CacheFutureGameIds();
             using (var da = new SqlDataAdapter("SELECT * FROM FutureGame WHERE 0 = 1", _connectionString))
             {
                 da.Fill(gameTable);
@@ -68,6 +70,9 @@ namespace DataAccess.GamesRepository
 
                 foreach (var game in games)
                 {
+                    // Skip if game exists
+                    if (_futureGames.Contains(game.id))
+                        continue;
                     var newRow = gameTable.NewRow();
                     newRow["id"] = game.id;
                     newRow["homeTeamName"] = game.homeTeamName;
@@ -94,7 +99,19 @@ namespace DataAccess.GamesRepository
                 _gamesForYear.Add(MapDataRowToGame(row));
             }
         }
-
+        public void CacheFutureGameIds()
+        {
+            _futureGames.Clear();
+            var dataTable = new DataTable();
+            using (var da = new SqlDataAdapter($"SELECT id FROM FutureGame", _connectionString))
+            {
+                da.Fill(dataTable);
+            }
+            foreach (DataRow row in dataTable.Rows)
+            {
+                _futureGames.Add(Convert.ToInt32(row["id"]));
+            }
+        }
         public Game GetCachedGameById(int id)
         {
             var game = _gamesForYear.FirstOrDefault(i => i.id == id);
@@ -147,6 +164,31 @@ namespace DataAccess.GamesRepository
                 games.Add(MapDataRowToGame(row));
             }
             return games;
+        }
+
+        public List<FutureGame> GetFutureGames()
+        {
+            var games = new List<FutureGame>();
+            var table = new DataTable();
+            using (var da = new SqlDataAdapter("SELECT * FROM FutureGame", _connectionString))
+            {
+                da.Fill(table);
+            }
+            foreach (DataRow row in table.Rows)
+            {
+                games.Add(MapDataRowToFutureGame(row));
+            }
+            return games;
+        }
+        public FutureGame MapDataRowToFutureGame(DataRow row)
+        {
+            return new FutureGame()
+            {
+                id = Convert.ToInt32(row["id"]),
+                homeTeamName = row["homeTeamName"].ToString(),
+                awayTeamName = row["awayTeamName"].ToString(),
+                gameDate = Convert.ToDateTime(row["gameDate"]),
+            };
         }
 
         public Game MapDataRowToGame(DataRow row)

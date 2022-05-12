@@ -14,5 +14,6 @@ namespace DataAccess.GamesRepository
         Game GetCachedGameById(int id);
         List<Game> GetCachedGames();
         void AddFutureGames(List<FutureGame> games);
+        List<FutureGame> GetFutureGames();
     }
 }
