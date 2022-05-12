@@ -74,7 +74,7 @@ namespace DataAccess.FutureCleanedGame
                 da.Update(gameTable);
             }
         }
-        private void CacheFutureGameIds()
+        public void CacheFutureGameIds()
         {
             _cachedGameIds.Clear();
             var dataTable = new DataTable();
@@ -86,6 +86,13 @@ namespace DataAccess.FutureCleanedGame
             {
                 _cachedGameIds.Add(Convert.ToInt32(row["id"]));
             }
+        }
+        public bool GetIfFutureGameExistsByIdFromCache(int id)
+        {
+            int gameExists = _cachedGameIds.FirstOrDefault(i => i == id);
+            if (gameExists == 0)
+                return false;
+            return true;
         }
     }
 }

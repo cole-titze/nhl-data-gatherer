@@ -20,18 +20,19 @@ namespace NhlDataCollection.DataGetter
         private List<FutureGame> ParseMessageToGames(dynamic message)
         {
             var gameList = new List<FutureGame>();
-            var games = message.dates[0].games;
-
-            foreach (var game in games)
+            foreach (var date in message.dates)
             {
-                var futureGame = new FutureGame()
+                foreach (var game in date.games)
                 {
-                    id = (int)game.gamePk,
-                    homeTeamName = (string)game.teams.home.team.name,
-                    awayTeamName = (string)game.teams.away.team.name,
-                    gameDate = DateTime.Parse((string)game.gameDate),
-                };
-                gameList.Add(futureGame);
+                    var futureGame = new FutureGame()
+                    {
+                        id = (int)game.gamePk,
+                        homeTeamName = (string)game.teams.home.team.name,
+                        awayTeamName = (string)game.teams.away.team.name,
+                        gameDate = DateTime.Parse((string)game.gameDate),
+                    };
+                    gameList.Add(futureGame);
+                }
             }
 
             return gameList;
