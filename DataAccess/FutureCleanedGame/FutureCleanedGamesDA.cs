@@ -74,7 +74,7 @@ namespace DataAccess.FutureCleanedGame
                 da.Update(gameTable);
             }
         }
-        public void CacheFutureGameIds()
+        private void CacheFutureGameIds()
         {
             _cachedGameIds.Clear();
             var dataTable = new DataTable();

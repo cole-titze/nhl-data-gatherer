@@ -9,6 +9,7 @@ using Entities;
 using NhlDataCleaning;
 using DataAccess.FutureGames;
 using DataAccess.FutureCleanedGame;
+using DataAccess.PredictedGames;
 
 namespace DataCollectionTrigger
 {
@@ -33,12 +34,13 @@ namespace DataCollectionTrigger
             var cleanGamesDA = new CleanedGamesDA(connectionString);
             var futureGamesDA = new FutureGamesDA(connectionString);
             var futureCleanedGamesDA = new FutureCleanedGamesDA(connectionString);
+            var predictedGamesDA = new PredictedGamesDA(connectionString);
             var dateRange = new DateRange()
             {
                 StartYear = 2012,
                 EndYear = GetEndSeason(DateTime.UtcNow),
             };
-            var dataGetter = new DataGetter(gameParser, scheduleParser, scheduleRequestMaker, gameRequestMaker, gamesDA, futureGamesDA, dateRange, logger);
+            var dataGetter = new DataGetter(gameParser, scheduleParser, scheduleRequestMaker, gameRequestMaker, gamesDA, futureGamesDA, predictedGamesDA, dateRange, logger);
             await dataGetter.GetData();
             logger.LogInformation("Completed Data Collection");
 
