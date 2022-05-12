@@ -5,12 +5,14 @@ using DataAccess.GamesRepository;
 using DataAccess.CleanedGamesRepository;
 using NhlDataCleaning.Mappers;
 using DataAccess.FutureCleanedGame;
+using DataAccess.FutureGames;
 
 namespace NhlDataCleaning
 {
     public class DataCleaner
     {
         private IGamesDA _gamesDA;
+        private IFutureGamesDA _futureGamesDA;
         private ICleanedGamesDA _cleanedGamesDA;
         private IFutureCleanedGamesDA _futureCleanedGamesDA;
         private readonly ILogger _logger;
@@ -18,10 +20,11 @@ namespace NhlDataCleaning
         private const int RECENT_GAMES = 5;
         private const int GAMES_TO_EXCLUDE = 15;
 
-        public DataCleaner(ILogger logger, IGamesDA gamesDa, ICleanedGamesDA cleanedDA, IFutureCleanedGamesDA futureCleanedDA, DateRange dateRange)
+        public DataCleaner(ILogger logger, IGamesDA gamesDa,IFutureGamesDA futureGamesDA, ICleanedGamesDA cleanedDA, IFutureCleanedGamesDA futureCleanedDA, DateRange dateRange)
         {
             _logger = logger;
             _gamesDA = gamesDa;
+            _futureGamesDA = futureGamesDA;
             _yearRange = dateRange;
             _cleanedGamesDA = cleanedDA;
             _futureCleanedGamesDA = futureCleanedDA;
@@ -41,7 +44,7 @@ namespace NhlDataCleaning
             }
             // Get and create future game records
             // TODO: I'm redoing the last seasons work here. Should be included above or something
-            var futureGames = _gamesDA.GetFutureGames();
+            var futureGames = _futureGamesDA.GetFutureGames();
             seasonsGames = _gamesDA.GetCachedGames();
             foreach(var game in futureGames)
             {

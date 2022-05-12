@@ -35,14 +35,12 @@ namespace NhlDataCollection.DataGetter
         {
             for (int year = _yearRange.StartYear; year <= _yearRange.EndYear; year++)
             {
-                _logger.LogInformation("Getting Year: " + year.ToString());
                 var gameCount = _gamesDA.GetGameCountBySeason(year);
                 // Skip if data is already in db and not the current year
                 // If current year, data could be incomplete so run anyways
                 if (gameCount > cutOffCount && year < _yearRange.EndYear)
                     continue;
 
-                _gamesDA.CacheSeasonOfGames(year);
                 var gameList = await GetGamesForSeason(year);
                 // Add a years worth of games to db
                 _gamesDA.AddGames(gameList);
@@ -65,6 +63,7 @@ namespace NhlDataCollection.DataGetter
 
         private async Task<List<Game>> GetGamesForSeason(int season)
         {
+            _gamesDA.CacheSeasonOfGames(season);
             var gameList = new List<Game>();
 
             for (int id = 0; id < _maxGameId; id++)

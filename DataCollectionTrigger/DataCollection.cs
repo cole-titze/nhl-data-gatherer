@@ -44,7 +44,7 @@ namespace DataCollectionTrigger
 
             // Run Data Cleaning
             logger.LogInformation("Starting Data Cleaning");
-            var dataCleaner = new DataCleaner(logger, gamesDA, cleanGamesDA, futureCleanedGamesDA, dateRange);
+            var dataCleaner = new DataCleaner(logger, gamesDA, futureGamesDA, cleanGamesDA, futureCleanedGamesDA, dateRange);
             dataCleaner.CleanData();
             logger.LogInformation("Completed Data Cleaning");
         }

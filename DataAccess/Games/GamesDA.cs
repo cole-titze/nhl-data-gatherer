@@ -56,8 +56,6 @@ namespace DataAccess.GamesRepository
                 da.Update(gameTable);
             }
         }
-
-
         public void CacheSeasonOfGames(int year)
         {
             _gamesForYear.Clear();
@@ -79,24 +77,10 @@ namespace DataAccess.GamesRepository
 
             return game;
         }
-
         public List<Game> GetCachedGames()
         {
             return _gamesForYear;
         }
-
-        public Game GetGameById(int id)
-        {
-            var gameTable = new DataTable();
-            using (var da = new SqlDataAdapter($"SELECT * FROM Game WHERE id = {id}", _connectionString))
-            {
-                da.Fill(gameTable);
-            }
-            if (gameTable.Rows.Count == 0)
-                return new Game();
-            return MapDataRowToGame(gameTable.Rows[0]);
-        }
-
         public int GetGameCountBySeason(int year)
         {
             int count;
@@ -109,47 +93,6 @@ namespace DataAccess.GamesRepository
             }
             return count;
         }
-
-        public List<Game> GetGames()
-        {
-            var games = new List<Game>();
-            var table = new DataTable();
-            using (var da = new SqlDataAdapter("SELECT * FROM Game", _connectionString))
-            {
-                da.Fill(table);
-            }
-            foreach (DataRow row in table.Rows)
-            {
-                games.Add(MapDataRowToGame(row));
-            }
-            return games;
-        }
-
-        public List<FutureGame> GetFutureGames()
-        {
-            var games = new List<FutureGame>();
-            var table = new DataTable();
-            using (var da = new SqlDataAdapter("SELECT * FROM FutureGame", _connectionString))
-            {
-                da.Fill(table);
-            }
-            foreach (DataRow row in table.Rows)
-            {
-                games.Add(MapDataRowToFutureGame(row));
-            }
-            return games;
-        }
-        public FutureGame MapDataRowToFutureGame(DataRow row)
-        {
-            return new FutureGame()
-            {
-                id = Convert.ToInt32(row["id"]),
-                homeTeamName = row["homeTeamName"].ToString(),
-                awayTeamName = row["awayTeamName"].ToString(),
-                gameDate = Convert.ToDateTime(row["gameDate"]),
-            };
-        }
-
         public Game MapDataRowToGame(DataRow row)
         {
             return new Game()

@@ -51,6 +51,29 @@ namespace DataAccess.FutureGames
                 _futureGameIds.Add(Convert.ToInt32(row["id"]));
             }
         }
-
+        public List<FutureGame> GetFutureGames()
+        {
+            var games = new List<FutureGame>();
+            var table = new DataTable();
+            using (var da = new SqlDataAdapter("SELECT * FROM FutureGame", _connectionString))
+            {
+                da.Fill(table);
+            }
+            foreach (DataRow row in table.Rows)
+            {
+                games.Add(MapDataRowToFutureGame(row));
+            }
+            return games;
+        }
+        private FutureGame MapDataRowToFutureGame(DataRow row)
+        {
+            return new FutureGame()
+            {
+                id = Convert.ToInt32(row["id"]),
+                homeTeamName = row["homeTeamName"].ToString(),
+                awayTeamName = row["awayTeamName"].ToString(),
+                gameDate = Convert.ToDateTime(row["gameDate"]),
+            };
+        }
     }
 }
