@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using DataAccess.GamesRepository;
 using DataAccess.CleanedGamesRepository;
 using NhlDataCleaning.Mappers;
+using DataAccess.FutureCleanedGame;
 
 namespace NhlDataCleaning
 {
@@ -11,17 +12,19 @@ namespace NhlDataCleaning
     {
         private IGamesDA _gamesDA;
         private ICleanedGamesDA _cleanedGamesDA;
+        private IFutureCleanedGamesDA _futureCleanedGamesDA;
         private readonly ILogger _logger;
         private readonly DateRange _yearRange;
         private const int RECENT_GAMES = 5;
         private const int GAMES_TO_EXCLUDE = 15;
 
-        public DataCleaner(ILogger logger, IGamesDA gamesDa, ICleanedGamesDA cleanedDA, DateRange dateRange)
+        public DataCleaner(ILogger logger, IGamesDA gamesDa, ICleanedGamesDA cleanedDA, IFutureCleanedGamesDA futureCleanedDA, DateRange dateRange)
         {
             _logger = logger;
             _gamesDA = gamesDa;
             _yearRange = dateRange;
             _cleanedGamesDA = cleanedDA;
+            _futureCleanedGamesDA = futureCleanedDA;
         }
         public void CleanData()
         {
@@ -46,7 +49,7 @@ namespace NhlDataCleaning
                 seasonsGames.Add(mappedGame);
             }
             games = CleanGames(seasonsGames);
-            _cleanedGamesDA.AddFutureGames(games);
+            _futureCleanedGamesDA.AddFutureGames(games);
         }
         private List<CleanedGame> CleanGames(List<Game> seasonsGames)
         {

@@ -1,7 +1,6 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
 using Entities.Models;
-using System.Linq;
 
 namespace DataAccess.GamesRepository
 {
@@ -9,7 +8,6 @@ namespace DataAccess.GamesRepository
     {
         private string _connectionString;
         private List<Game> _gamesForYear = new List<Game>();
-        private List<int> _futureGames = new List<int>();
 
         public GamesDA(string connectionString)
         {
@@ -58,32 +56,6 @@ namespace DataAccess.GamesRepository
                 da.Update(gameTable);
             }
         }
-        public void AddFutureGames(List<FutureGame> games)
-        {
-            var gameTable = new DataTable();
-            CacheFutureGameIds();
-            using (var da = new SqlDataAdapter("SELECT * FROM FutureGame WHERE 0 = 1", _connectionString))
-            {
-                da.Fill(gameTable);
-                SqlCommandBuilder cb = new SqlCommandBuilder(da);
-                da.UpdateCommand = cb.GetUpdateCommand();
-
-                foreach (var game in games)
-                {
-                    // Skip if game exists
-                    if (_futureGames.Contains(game.id))
-                        continue;
-                    var newRow = gameTable.NewRow();
-                    newRow["id"] = game.id;
-                    newRow["homeTeamName"] = game.homeTeamName;
-                    newRow["awayTeamName"] = game.awayTeamName;
-                    newRow["gameDate"] = game.gameDate;
-
-                    gameTable.Rows.Add(newRow);
-                }
-                da.Update(gameTable);
-            }
-        }
 
 
         public void CacheSeasonOfGames(int year)
@@ -97,19 +69,6 @@ namespace DataAccess.GamesRepository
             foreach (DataRow row in dataTable.Rows)
             {
                 _gamesForYear.Add(MapDataRowToGame(row));
-            }
-        }
-        public void CacheFutureGameIds()
-        {
-            _futureGames.Clear();
-            var dataTable = new DataTable();
-            using (var da = new SqlDataAdapter($"SELECT id FROM FutureGame", _connectionString))
-            {
-                da.Fill(dataTable);
-            }
-            foreach (DataRow row in dataTable.Rows)
-            {
-                _futureGames.Add(Convert.ToInt32(row["id"]));
             }
         }
         public Game GetCachedGameById(int id)

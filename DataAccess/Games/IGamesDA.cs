@@ -13,7 +13,6 @@ namespace DataAccess.GamesRepository
         void CacheSeasonOfGames(int year);
         Game GetCachedGameById(int id);
         List<Game> GetCachedGames();
-        void AddFutureGames(List<FutureGame> games);
         List<FutureGame> GetFutureGames();
     }
 }
