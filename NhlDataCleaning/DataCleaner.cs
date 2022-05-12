@@ -46,14 +46,25 @@ namespace NhlDataCleaning
             // TODO: I'm redoing the last seasons work here. Should be included above or something
             var futureGames = _futureGamesDA.GetFutureGames();
             seasonsGames = _gamesDA.GetCachedGames();
+            var ids = GetSeasonIds(seasonsGames);
             foreach(var game in futureGames)
             {
                 var mappedGame = GameMapper.FutureGameToGame(game);
-                seasonsGames.Add(mappedGame);
+                if(!ids.Contains(mappedGame.id))
+                    seasonsGames.Add(mappedGame);
             }
-            games = CleanGames(seasonsGames);
+            games = CleanFutureGames(seasonsGames);
             _futureCleanedGamesDA.AddFutureGames(games);
         }
+
+        private List<int> GetSeasonIds(List<Game> seasonsGames)
+        {
+            var ids = new List<int>();
+            foreach (var game in seasonsGames)
+                ids.Add(game.id);
+            return ids;
+        }
+
         private List<CleanedGame> CleanGames(List<Game> seasonsGames)
         {
             _cleanedGamesDA.CacheGameIds();
@@ -63,66 +74,90 @@ namespace NhlDataCleaning
             {
                 if (GameExists(game))
                     continue;
-                var homeGames = GetTeamGames(seasonsGames, game.homeTeamName, game.id);
-                var awayGames = GetTeamGames(seasonsGames, game.awayTeamName, game.id);
-                var cleanedGame = new CleanedGame()
-                {
-                    id = game.id,
-                    homeTeamName = game.homeTeamName,
-                    awayTeamName = game.awayTeamName,
-                    seasonStartYear = game.seasonStartYear,
-                    gameDate = game.gameDate,
+                var cleanedGame = GetCleanGame(seasonsGames, game);
+                cleanedGames.Add(cleanedGame);
+            }
 
-                    homeWinRatio = Cleaner.GetWinRatioOfRecentGames(homeGames, game.homeTeamName, homeGames.Count()),
-                    homeRecentWinRatio = Cleaner.GetWinRatioOfRecentGames(homeGames, game.homeTeamName, RECENT_GAMES),
-                    homeGoalsAvg = Cleaner.GetGoalsAvgOfRecentGames(homeGames, game.homeTeamName, homeGames.Count()),
-                    homeRecentGoalsAvg = Cleaner.GetGoalsAvgOfRecentGames(homeGames, game.homeTeamName, RECENT_GAMES),
-                    homeConcededGoalsAvg = Cleaner.GetConcededGoalsAvgOfRecentGames(homeGames, game.homeTeamName, homeGames.Count()),
-                    homeRecentConcededGoalsAvg = Cleaner.GetConcededGoalsAvgOfRecentGames(homeGames, game.homeTeamName, RECENT_GAMES),
-                    homeRecentSogAvg = Cleaner.GetSogAvgOfRecentGames(homeGames, game.homeTeamName, RECENT_GAMES),
-                    homeRecentBlockedShotsAvg = Cleaner.GetBlockedShotsAvgOfRecentGames(homeGames, game.homeTeamName, RECENT_GAMES),
-                    homeRecentPpgAvg = Cleaner.GetPpgAvgOfRecentGames(homeGames, game.homeTeamName, RECENT_GAMES),
-                    homeRecentHitsAvg = Cleaner.GetHitsAvgOfRecentGames(homeGames, game.homeTeamName, RECENT_GAMES),
-                    homeRecentPimAvg = Cleaner.GetPimAvgOfRecentGames(homeGames, game.homeTeamName, RECENT_GAMES),
-                    homeRecentTakeawaysAvg = Cleaner.GetTakeawaysAvgOfRecentGames(homeGames, game.homeTeamName, RECENT_GAMES),
-                    homeRecentGiveawaysAvg = Cleaner.GetGiveawaysAvgOfRecentGames(homeGames, game.homeTeamName, RECENT_GAMES),
-                    homeConcededGoalsAvgAtHome = Cleaner.GetConcededGoalsAvgOfRecentGamesAtHome(homeGames, game.homeTeamName, homeGames.Count()),
-                    homeRecentConcededGoalsAvgAtHome = Cleaner.GetConcededGoalsAvgOfRecentGamesAtHome(homeGames, game.homeTeamName, RECENT_GAMES),
-                    homeGoalsAvgAtHome = Cleaner.GetGoalsAvgOfRecentGamesAtHome(homeGames, game.homeTeamName, homeGames.Count()),
-                    homeRecentGoalsAvgAtHome = Cleaner.GetGoalsAvgOfRecentGamesAtHome(homeGames, game.homeTeamName, RECENT_GAMES),
-
-                    awayWinRatio = Cleaner.GetWinRatioOfRecentGames(awayGames, game.awayTeamName, awayGames.Count()),
-                    awayRecentWinRatio = Cleaner.GetWinRatioOfRecentGames(awayGames, game.awayTeamName, RECENT_GAMES),
-                    awayGoalsAvg = Cleaner.GetGoalsAvgOfRecentGames(awayGames, game.awayTeamName, awayGames.Count()),
-                    awayRecentGoalsAvg = Cleaner.GetGoalsAvgOfRecentGames(awayGames, game.awayTeamName, RECENT_GAMES),
-                    awayConcededGoalsAvg = Cleaner.GetConcededGoalsAvgOfRecentGames(awayGames, game.awayTeamName, awayGames.Count()),
-                    awayRecentConcededGoalsAvg = Cleaner.GetConcededGoalsAvgOfRecentGames(awayGames, game.awayTeamName, RECENT_GAMES),
-                    awayRecentSogAvg = Cleaner.GetSogAvgOfRecentGames(awayGames, game.awayTeamName, RECENT_GAMES),
-                    awayRecentBlockedShotsAvg = Cleaner.GetBlockedShotsAvgOfRecentGames(awayGames, game.awayTeamName, RECENT_GAMES),
-                    awayRecentPpgAvg = Cleaner.GetPpgAvgOfRecentGames(awayGames, game.awayTeamName, RECENT_GAMES),
-                    awayRecentHitsAvg = Cleaner.GetHitsAvgOfRecentGames(awayGames, game.awayTeamName, RECENT_GAMES),
-                    awayRecentPimAvg = Cleaner.GetPimAvgOfRecentGames(awayGames, game.awayTeamName, RECENT_GAMES),
-                    awayRecentTakeawaysAvg = Cleaner.GetTakeawaysAvgOfRecentGames(awayGames, game.awayTeamName, RECENT_GAMES),
-                    awayRecentGiveawaysAvg = Cleaner.GetGiveawaysAvgOfRecentGames(awayGames, game.awayTeamName, RECENT_GAMES),
-                    awayConcededGoalsAvgAtAway = Cleaner.GetConcededGoalsAvgOfRecentGamesAtAway(awayGames, game.awayTeamName, awayGames.Count()),
-                    awayRecentConcededGoalsAvgAtAway = Cleaner.GetConcededGoalsAvgOfRecentGamesAtAway(awayGames, game.awayTeamName, RECENT_GAMES),
-                    awayGoalsAvgAtAway = Cleaner.GetGoalsAvgOfRecentGamesAtAway(awayGames, game.awayTeamName, awayGames.Count()),
-                    awayRecentGoalsAvgAtAway = Cleaner.GetGoalsAvgOfRecentGamesAtAway(awayGames, game.awayTeamName, RECENT_GAMES),
-
-                    winner = game.winner,
-                    isExcluded = Cleaner.GetIsExcluded(awayGames, homeGames, GAMES_TO_EXCLUDE),
-                };
+            return cleanedGames;
+        }
+        private List<CleanedGame> CleanFutureGames(List<Game> seasonsGames)
+        {
+            _futureCleanedGamesDA.CacheFutureGameIds();
+            var cleanedGames = new List<CleanedGame>();
+            seasonsGames = seasonsGames.OrderBy(i => i.id).Reverse().ToList();
+            foreach (var game in seasonsGames)
+            {
+                if (FutureGameExists(game))
+                    continue;
+                var cleanedGame = GetCleanGame(seasonsGames, game);
                 cleanedGames.Add(cleanedGame);
             }
 
             return cleanedGames;
         }
 
+        private CleanedGame GetCleanGame(List<Game> seasonsGames, Game game)
+        {
+            var homeGames = GetTeamGames(seasonsGames, game.homeTeamName, game.id);
+            var awayGames = GetTeamGames(seasonsGames, game.awayTeamName, game.id);
+            var cleanedGame = new CleanedGame()
+            {
+                id = game.id,
+                homeTeamName = game.homeTeamName,
+                awayTeamName = game.awayTeamName,
+                seasonStartYear = game.seasonStartYear,
+                gameDate = game.gameDate,
+
+                homeWinRatio = Cleaner.GetWinRatioOfRecentGames(homeGames, game.homeTeamName, homeGames.Count()),
+                homeRecentWinRatio = Cleaner.GetWinRatioOfRecentGames(homeGames, game.homeTeamName, RECENT_GAMES),
+                homeGoalsAvg = Cleaner.GetGoalsAvgOfRecentGames(homeGames, game.homeTeamName, homeGames.Count()),
+                homeRecentGoalsAvg = Cleaner.GetGoalsAvgOfRecentGames(homeGames, game.homeTeamName, RECENT_GAMES),
+                homeConcededGoalsAvg = Cleaner.GetConcededGoalsAvgOfRecentGames(homeGames, game.homeTeamName, homeGames.Count()),
+                homeRecentConcededGoalsAvg = Cleaner.GetConcededGoalsAvgOfRecentGames(homeGames, game.homeTeamName, RECENT_GAMES),
+                homeRecentSogAvg = Cleaner.GetSogAvgOfRecentGames(homeGames, game.homeTeamName, RECENT_GAMES),
+                homeRecentBlockedShotsAvg = Cleaner.GetBlockedShotsAvgOfRecentGames(homeGames, game.homeTeamName, RECENT_GAMES),
+                homeRecentPpgAvg = Cleaner.GetPpgAvgOfRecentGames(homeGames, game.homeTeamName, RECENT_GAMES),
+                homeRecentHitsAvg = Cleaner.GetHitsAvgOfRecentGames(homeGames, game.homeTeamName, RECENT_GAMES),
+                homeRecentPimAvg = Cleaner.GetPimAvgOfRecentGames(homeGames, game.homeTeamName, RECENT_GAMES),
+                homeRecentTakeawaysAvg = Cleaner.GetTakeawaysAvgOfRecentGames(homeGames, game.homeTeamName, RECENT_GAMES),
+                homeRecentGiveawaysAvg = Cleaner.GetGiveawaysAvgOfRecentGames(homeGames, game.homeTeamName, RECENT_GAMES),
+                homeConcededGoalsAvgAtHome = Cleaner.GetConcededGoalsAvgOfRecentGamesAtHome(homeGames, game.homeTeamName, homeGames.Count()),
+                homeRecentConcededGoalsAvgAtHome = Cleaner.GetConcededGoalsAvgOfRecentGamesAtHome(homeGames, game.homeTeamName, RECENT_GAMES),
+                homeGoalsAvgAtHome = Cleaner.GetGoalsAvgOfRecentGamesAtHome(homeGames, game.homeTeamName, homeGames.Count()),
+                homeRecentGoalsAvgAtHome = Cleaner.GetGoalsAvgOfRecentGamesAtHome(homeGames, game.homeTeamName, RECENT_GAMES),
+
+                awayWinRatio = Cleaner.GetWinRatioOfRecentGames(awayGames, game.awayTeamName, awayGames.Count()),
+                awayRecentWinRatio = Cleaner.GetWinRatioOfRecentGames(awayGames, game.awayTeamName, RECENT_GAMES),
+                awayGoalsAvg = Cleaner.GetGoalsAvgOfRecentGames(awayGames, game.awayTeamName, awayGames.Count()),
+                awayRecentGoalsAvg = Cleaner.GetGoalsAvgOfRecentGames(awayGames, game.awayTeamName, RECENT_GAMES),
+                awayConcededGoalsAvg = Cleaner.GetConcededGoalsAvgOfRecentGames(awayGames, game.awayTeamName, awayGames.Count()),
+                awayRecentConcededGoalsAvg = Cleaner.GetConcededGoalsAvgOfRecentGames(awayGames, game.awayTeamName, RECENT_GAMES),
+                awayRecentSogAvg = Cleaner.GetSogAvgOfRecentGames(awayGames, game.awayTeamName, RECENT_GAMES),
+                awayRecentBlockedShotsAvg = Cleaner.GetBlockedShotsAvgOfRecentGames(awayGames, game.awayTeamName, RECENT_GAMES),
+                awayRecentPpgAvg = Cleaner.GetPpgAvgOfRecentGames(awayGames, game.awayTeamName, RECENT_GAMES),
+                awayRecentHitsAvg = Cleaner.GetHitsAvgOfRecentGames(awayGames, game.awayTeamName, RECENT_GAMES),
+                awayRecentPimAvg = Cleaner.GetPimAvgOfRecentGames(awayGames, game.awayTeamName, RECENT_GAMES),
+                awayRecentTakeawaysAvg = Cleaner.GetTakeawaysAvgOfRecentGames(awayGames, game.awayTeamName, RECENT_GAMES),
+                awayRecentGiveawaysAvg = Cleaner.GetGiveawaysAvgOfRecentGames(awayGames, game.awayTeamName, RECENT_GAMES),
+                awayConcededGoalsAvgAtAway = Cleaner.GetConcededGoalsAvgOfRecentGamesAtAway(awayGames, game.awayTeamName, awayGames.Count()),
+                awayRecentConcededGoalsAvgAtAway = Cleaner.GetConcededGoalsAvgOfRecentGamesAtAway(awayGames, game.awayTeamName, RECENT_GAMES),
+                awayGoalsAvgAtAway = Cleaner.GetGoalsAvgOfRecentGamesAtAway(awayGames, game.awayTeamName, awayGames.Count()),
+                awayRecentGoalsAvgAtAway = Cleaner.GetGoalsAvgOfRecentGamesAtAway(awayGames, game.awayTeamName, RECENT_GAMES),
+
+                winner = game.winner,
+                isExcluded = Cleaner.GetIsExcluded(awayGames, homeGames, GAMES_TO_EXCLUDE),
+            };
+            return cleanedGame;
+        }
+
         private bool GameExists(Game game)
         {
             return _cleanedGamesDA.GetIfGameExistsByIdFromCache(game.id);
         }
-
+        private bool FutureGameExists(Game game)
+        {
+            return _futureCleanedGamesDA.GetIfFutureGameExistsByIdFromCache(game.id);
+        }
         private List<Game> GetTeamGames(List<Game> seasonsGames, string teamName, int id)
         {
             // Get games that happened before current game and include the team
