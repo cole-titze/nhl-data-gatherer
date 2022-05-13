@@ -4,8 +4,10 @@ using DataAccess.GamesRepository;
 using Microsoft.Extensions.Logging;
 using DataAccess.FutureGames;
 using DataAccess.PredictedGames;
+using NhlDataCollection.FutureGameCollection;
+using NhlDataCollection.GameCollection;
 
-namespace NhlDataCollection.DataGetter
+namespace NhlDataCollection
 {
     public class DataGetter
 	{
@@ -51,6 +53,7 @@ namespace NhlDataCollection.DataGetter
             var futureGames = await GetFutureGames();
             _futureGamesDA.AddFutureGames(futureGames);
             _predictedGamesDA.AddPredictedGames(futureGames);
+            //var vegasOdds = await 
         }
         private async Task<List<FutureGame>> GetFutureGames()
         {

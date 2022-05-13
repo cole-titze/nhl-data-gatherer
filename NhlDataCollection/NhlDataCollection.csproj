@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <None Remove="DataAccess\" />
-    <None Remove="DataGetter\" />
     <None Remove="Microsoft.Extensions.Configuration" />
     <None Remove="System.Data.SqlClient" />
     <None Remove="Newtonsoft.Json" />

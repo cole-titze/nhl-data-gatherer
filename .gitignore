@@ -460,3 +460,4 @@ $RECYCLE.BIN/
 
 appsettings.Development.json
 local.settings.json
+appsettings.Local.json

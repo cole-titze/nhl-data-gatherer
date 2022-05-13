@@ -1,6 +1,6 @@
 using Entities.Models;
 
-namespace NhlDataCollection.DataGetter
+namespace NhlDataCollection.GameCollection
 {
     public interface IGameParser
     {

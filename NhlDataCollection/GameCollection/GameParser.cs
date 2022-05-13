@@ -1,7 +1,7 @@
 using Newtonsoft.Json;
 using Entities.Models;
 
-namespace NhlDataCollection.DataGetter
+namespace NhlDataCollection.GameCollection
 {
     public class GameParser : IGameParser
 	{

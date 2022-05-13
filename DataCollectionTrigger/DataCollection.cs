@@ -4,12 +4,14 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using DataAccess.GamesRepository;
 using DataAccess.CleanedGamesRepository;
-using NhlDataCollection.DataGetter;
+using NhlDataCollection.GameCollection;
 using Entities;
 using NhlDataCleaning;
 using DataAccess.FutureGames;
 using DataAccess.FutureCleanedGame;
 using DataAccess.PredictedGames;
+using NhlDataCollection.FutureGameCollection;
+using NhlDataCollection;
 
 namespace DataCollectionTrigger
 {

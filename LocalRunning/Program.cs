@@ -16,7 +16,7 @@ var sp = collection.BuildServiceProvider();
 using (var scope = sp.CreateScope())
 {
     var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-    var config = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+    var config = new ConfigurationBuilder().AddJsonFile("appsettings.Local.json").Build();
     string connectionString = config.GetConnectionString("GamesDatabase");
     await collector.Main(logger, connectionString);
 }

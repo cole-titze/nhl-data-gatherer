@@ -1,6 +1,6 @@
 ﻿using System.Net.Http.Headers;
 
-namespace NhlDataCollection.DataGetter
+namespace NhlDataCollection.FutureGameCollection
 {
     public class ScheduleRequestMaker : IScheduleRequestMaker
     {

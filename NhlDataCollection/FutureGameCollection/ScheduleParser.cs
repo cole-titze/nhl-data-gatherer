@@ -1,7 +1,7 @@
 ﻿using Entities.Models;
 using Newtonsoft.Json;
 
-namespace NhlDataCollection.DataGetter
+namespace NhlDataCollection.FutureGameCollection
 {
     public class ScheduleParser : IScheduleParser
     {

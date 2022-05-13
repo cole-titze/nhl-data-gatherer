@@ -1,4 +1,4 @@
-﻿namespace NhlDataCollection.DataGetter
+﻿namespace NhlDataCollection.FutureGameCollection
 {
     public interface IScheduleRequestMaker
     {

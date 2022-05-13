@@ -1,6 +1,6 @@
 ﻿using Entities.Models;
 
-namespace NhlDataCollection.DataGetter
+namespace NhlDataCollection.FutureGameCollection
 {
     public interface IScheduleParser
     {
