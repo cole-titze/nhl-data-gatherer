@@ -2,16 +2,14 @@
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
-using DataAccess.GamesRepository;
-using DataAccess.CleanedGamesRepository;
 using NhlDataCollection.GameCollection;
 using Entities;
 using NhlDataCleaning;
-using DataAccess.FutureGames;
-using DataAccess.FutureCleanedGame;
-using DataAccess.PredictedGames;
 using NhlDataCollection.FutureGameCollection;
 using NhlDataCollection;
+using DataAccess.GameRepository;
+using DataAccess.PlayerRepository;
+using DataAccess;
 
 namespace DataCollectionTrigger
 {
@@ -28,28 +26,27 @@ namespace DataCollectionTrigger
             // Run Data Collection
             logger.LogInformation("Starting Data Collection");
 
+            var gameDbContext = new GameDbContext(connectionString);
+            var playerDbContext = new PlayerDbContext(connectionString);
             var gameParser = new GameParser();
             var scheduleParser = new ScheduleParser();
             var gameRequestMaker = new GameRequestMaker();
             var scheduleRequestMaker = new ScheduleRequestMaker();
-            var gamesDA = new GamesDA(connectionString);
-            var cleanGamesDA = new CleanedGamesDA(connectionString);
-            var futureGamesDA = new FutureGamesDA(connectionString);
-            var futureCleanedGamesDA = new FutureCleanedGamesDA(connectionString);
-            var predictedGamesDA = new PredictedGamesDA(connectionString);
+            var gameRepo = new GameRepository(gameDbContext);
+            var playerRepo = new PlayerValueRepository(playerDbContext);
             var dateRange = new DateRange()
             {
                 StartYear = 2012,
                 EndYear = GetEndSeason(DateTime.UtcNow),
             };
-            var dataGetter = new DataGetter(gameParser, scheduleParser, scheduleRequestMaker, gameRequestMaker, gamesDA, futureGamesDA, predictedGamesDA, dateRange, logger);
+            var dataGetter = new DataGetter(gameParser, scheduleParser, scheduleRequestMaker, gameRequestMaker, playerRepo, gameRepo, dateRange, logger);
             await dataGetter.GetData();
             logger.LogInformation("Completed Data Collection");
 
             // Run Data Cleaning
             logger.LogInformation("Starting Data Cleaning");
-            var dataCleaner = new DataCleaner(logger, gamesDA, futureGamesDA, cleanGamesDA, futureCleanedGamesDA, dateRange);
-            dataCleaner.CleanData();
+            var dataCleaner = new DataCleaner(logger, playerRepo, gameRepo, dateRange);
+            await dataCleaner.CleanData();
             logger.LogInformation("Completed Data Cleaning");
         }
 
