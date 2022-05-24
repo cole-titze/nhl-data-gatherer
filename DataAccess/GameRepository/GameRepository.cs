@@ -14,24 +14,24 @@ namespace DataAccess.GameRepository
 
         public async Task AddFutureGames(List<FutureGame> futureGames)
         {
-            await _dbContext.FutureGames.AddRangeAsync(futureGames);
+            await _dbContext.FutureGame.AddRangeAsync(futureGames);
         }
 
         public async Task AddGames(List<Game> games)
         {
-            await _dbContext.Games.AddRangeAsync(games);
+            await _dbContext.Game.AddRangeAsync(games);
             await _dbContext.SaveChangesAsync();
         }
 
         public async Task AddPredictedGames(List<PredictedGame> predictedGames)
         {
-            await _dbContext.PredictedGames.AddRangeAsync(predictedGames);
+            await _dbContext.PredictedGame.AddRangeAsync(predictedGames);
             await _dbContext.SaveChangesAsync();
         }
 
         public async Task CacheSeasonOfGames(int season)
         {
-            _cachedGames = await _dbContext.Games.Where(s => s.seasonStartYear == season).ToListAsync();
+            _cachedGames = await _dbContext.Game.Where(s => s.seasonStartYear == season).ToListAsync();
         }
 
         public Game GetCachedGameById(int id)
@@ -44,7 +44,7 @@ namespace DataAccess.GameRepository
 
         public async Task<int> GetGameCountBySeason(int year)
         {
-            return await _dbContext.Games.Where(s => s.seasonStartYear == year)
+            return await _dbContext.Game.Where(s => s.seasonStartYear == year)
                                 .CountAsync();
         }
 
@@ -55,24 +55,24 @@ namespace DataAccess.GameRepository
 
         public async Task AddCleanedGames(List<CleanedGame> games)
         {
-            await _dbContext.CleanedGames.AddRangeAsync(games);
+            await _dbContext.CleanedGame.AddRangeAsync(games);
             await _dbContext.SaveChangesAsync();
         }
 
         public async Task<List<FutureGame>> GetFutureGames()
         {
-            return await _dbContext.FutureGames.ToListAsync();
+            return await _dbContext.FutureGame.ToListAsync();
         }
 
         public async Task AddFutureCleanedGames(List<FutureCleanedGame> futureCleanedGames)
         {
-            await _dbContext.FutureCleanedGames.AddRangeAsync(futureCleanedGames);
+            await _dbContext.FutureCleanedGame.AddRangeAsync(futureCleanedGames);
             await _dbContext.SaveChangesAsync();
         }
 
         public async Task<bool> GetIfGameExistsById(int id)
         {
-            var game = await _dbContext.Games.FirstOrDefaultAsync(i => i.id == id);
+            var game = await _dbContext.Game.FirstOrDefaultAsync(i => i.id == id);
             if (game == null)
                 return false;
             return true;
@@ -80,7 +80,7 @@ namespace DataAccess.GameRepository
 
         public async Task<bool> GetIfFutureGameExistsById(int id)
         {
-            var game = await _dbContext.FutureGames.FirstOrDefaultAsync(i => i.id == id);
+            var game = await _dbContext.FutureGame.FirstOrDefaultAsync(i => i.id == id);
             if (game == null)
                 return false;
             return true;
