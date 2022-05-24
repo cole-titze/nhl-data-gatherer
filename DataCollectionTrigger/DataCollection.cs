@@ -18,16 +18,17 @@ namespace DataCollectionTrigger
         [FunctionName("DataCollectionTrigger")]
         public async Task Run([TimerTrigger("0 0 5 * * *")]TimerInfo myTimer, ILogger logger)
         {
-            string connectionString = System.Environment.GetEnvironmentVariable("GamesDatabase", EnvironmentVariableTarget.Process);
-            await Main(logger, connectionString);
+            string gamesConnectionString = System.Environment.GetEnvironmentVariable("GamesDatabase", EnvironmentVariableTarget.Process);
+            string playersConnectionString = System.Environment.GetEnvironmentVariable("PlayersDatabase", EnvironmentVariableTarget.Process);
+            await Main(logger, gamesConnectionString, playersConnectionString);
         }
-        public async Task Main(ILogger logger, string connectionString)
+        public async Task Main(ILogger logger, string gamesConnectionString, string playersConnectionString)
         {
             // Run Data Collection
             logger.LogInformation("Starting Data Collection");
 
-            var gameDbContext = new GameDbContext(connectionString);
-            var playerDbContext = new PlayerDbContext(connectionString);
+            var gameDbContext = new GameDbContext(gamesConnectionString);
+            var playerDbContext = new PlayerDbContext(playersConnectionString);
             var gameParser = new GameParser();
             var scheduleParser = new ScheduleParser();
             var gameRequestMaker = new GameRequestMaker();
