@@ -65,7 +65,7 @@ namespace NhlDataCleaning
             seasonsGames = seasonsGames.OrderBy(i => i.id).Reverse().ToList();
             foreach(var game in seasonsGames)
             {
-                if (await GameExists(game))
+                if (await CleanedGameExists(game))
                     continue;
                 var cleanedGame = GetCleanGame(seasonsGames, game);
                 cleanedGames.Add(cleanedGame);
@@ -79,7 +79,7 @@ namespace NhlDataCleaning
             seasonsGames = seasonsGames.OrderBy(i => i.id).Reverse().ToList();
             foreach (var game in seasonsGames)
             {
-                if (await FutureGameExists(game))
+                if (await FutureCleanedGameExists(game))
                     continue;
                 var cleanedGame = GetFutureCleanGame(seasonsGames, game);
                 cleanedGames.Add(cleanedGame);
@@ -189,21 +189,18 @@ namespace NhlDataCleaning
                 awayRecentConcededGoalsAvgAtAway = Cleaner.GetConcededGoalsAvgOfRecentGamesAtAway(awayGames, game.awayTeamName, RECENT_GAMES),
                 awayGoalsAvgAtAway = Cleaner.GetGoalsAvgOfRecentGamesAtAway(awayGames, game.awayTeamName, awayGames.Count()),
                 awayRecentGoalsAvgAtAway = Cleaner.GetGoalsAvgOfRecentGamesAtAway(awayGames, game.awayTeamName, RECENT_GAMES),
-
-                winner = game.winner,
-                isExcluded = Cleaner.GetIsExcluded(awayGames, homeGames, GAMES_TO_EXCLUDE),
             };
             return cleanedGame;
         }
 
 
-        private async Task<bool> GameExists(Game game)
+        private async Task<bool> CleanedGameExists(Game game)
         {
-            return await _gameRepo.GetIfGameExistsById(game.id);
+            return await _gameRepo.GetIfCleanedGameExistsById(game.id);
         }
-        private async Task<bool> FutureGameExists(Game game)
+        private async Task<bool> FutureCleanedGameExists(Game game)
         {
-            return await _gameRepo.GetIfFutureGameExistsById(game.id);
+            return await _gameRepo.GetIfFutureCleanedGameExistsById(game.id);
         }
         private List<Game> GetTeamGames(List<Game> seasonsGames, string teamName, int id)
         {

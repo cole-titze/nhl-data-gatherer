@@ -14,7 +14,13 @@ namespace DataAccess.GameRepository
 
         public async Task AddFutureGames(List<FutureGame> futureGames)
         {
-            await _dbContext.FutureGame.AddRangeAsync(futureGames);
+            foreach(var futureGame in futureGames)
+            {
+                var game = _dbContext.FutureGame.FirstOrDefault(i => i.id == futureGame.id);
+                if (game == null)
+                    await _dbContext.FutureGame.AddAsync(futureGame);
+            }
+            await _dbContext.SaveChangesAsync();
         }
 
         public async Task AddGames(List<Game> games)
@@ -25,7 +31,12 @@ namespace DataAccess.GameRepository
 
         public async Task AddPredictedGames(List<PredictedGame> predictedGames)
         {
-            await _dbContext.PredictedGame.AddRangeAsync(predictedGames);
+            foreach(var predictedGame in predictedGames)
+            {
+                var game = _dbContext.PredictedGame.FirstOrDefault(i => i.id == predictedGame.id);
+                if(game == null)
+                    await _dbContext.PredictedGame.AddAsync(predictedGame);
+            }
             await _dbContext.SaveChangesAsync();
         }
 
@@ -66,21 +77,26 @@ namespace DataAccess.GameRepository
 
         public async Task AddFutureCleanedGames(List<FutureCleanedGame> futureCleanedGames)
         {
-            await _dbContext.FutureCleanedGame.AddRangeAsync(futureCleanedGames);
+            foreach (var futureCleanedGame in futureCleanedGames)
+            {
+                var game = _dbContext.FutureCleanedGame.FirstOrDefault(i => i.id == futureCleanedGame.id);
+                if (game == null)
+                    await _dbContext.FutureCleanedGame.AddAsync(futureCleanedGame);
+            }
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<bool> GetIfGameExistsById(int id)
+        public async Task<bool> GetIfCleanedGameExistsById(int id)
         {
-            var game = await _dbContext.Game.FirstOrDefaultAsync(i => i.id == id);
+            var game = await _dbContext.CleanedGame.FirstOrDefaultAsync(i => i.id == id);
             if (game == null)
                 return false;
             return true;
         }
 
-        public async Task<bool> GetIfFutureGameExistsById(int id)
+        public async Task<bool> GetIfFutureCleanedGameExistsById(int id)
         {
-            var game = await _dbContext.FutureGame.FirstOrDefaultAsync(i => i.id == id);
+            var game = await _dbContext.FutureCleanedGame.FirstOrDefaultAsync(i => i.id == id);
             if (game == null)
                 return false;
             return true;

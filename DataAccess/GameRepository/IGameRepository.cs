@@ -14,8 +14,8 @@ namespace DataAccess.GameRepository
         Task AddCleanedGames(List<CleanedGame> games);
         Task<List<FutureGame>> GetFutureGames();
         Task AddFutureCleanedGames(List<FutureCleanedGame> futureCleanedGames);
-        Task<bool> GetIfGameExistsById(int id);
-        Task<bool> GetIfFutureGameExistsById(int id);
+        Task<bool> GetIfCleanedGameExistsById(int id);
+        Task<bool> GetIfFutureCleanedGameExistsById(int id);
     }
 }
 

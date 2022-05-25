@@ -41,8 +41,6 @@
         public double awayConcededGoalsAvg { get; set; }
         public double awayConcededGoalsAvgAtAway { get; set; }
         public double awayRecentConcededGoalsAvgAtAway { get; set; }
-        public int winner { get; set; }
-        public bool isExcluded { get; set; }
 	}
 }
 
