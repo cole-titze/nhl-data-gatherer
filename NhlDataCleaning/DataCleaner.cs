@@ -13,6 +13,7 @@ namespace NhlDataCleaning
         private IGameRepository _gameRepo;
         private readonly ILogger _logger;
         private readonly DateRange _yearRange;
+        private const int CUTOFF_COUNT = 300;
         private const int RECENT_GAMES = 5;
         private const int GAMES_TO_EXCLUDE = 15;
 
@@ -30,6 +31,11 @@ namespace NhlDataCleaning
             // Get and clean games
             for (int year = _yearRange.StartYear; year <= _yearRange.EndYear; year++)
             {
+                // Skip year if its already been collected, always run current year
+                var gameCount = await _gameRepo.GetCleanedGameCountBySeason(year);
+                if (gameCount > CUTOFF_COUNT && year < _yearRange.EndYear)
+                    continue;
+
                 _logger.LogInformation("Cleaning Year: " + year.ToString());
                 await _gameRepo.CacheSeasonOfGames(year);
                 seasonsGames = _gameRepo.GetCachedGames();

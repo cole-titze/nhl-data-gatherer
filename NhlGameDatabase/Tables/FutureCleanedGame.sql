@@ -39,5 +39,11 @@
     awayConcededGoalsAvg FLOAT NOT NULL,
     awayConcededGoalsAvgAtAway FLOAT NOT NULL,
     awayRecentConcededGoalsAvgAtAway FLOAT NOT NULL,
+    homeRosterOffenseValue FLOAT NOT NULL,
+    homeRosterDefenseValue FLOAT NOT NULL,
+    homeRosterGoalieValue FLOAT NOT NULL,
+    awayRosterOffenseValue FLOAT NOT NULL,
+    awayRosterDefenseValue FLOAT NOT NULL,
+    awayRosterGoalieValue FLOAT NOT NULL,
     PRIMARY KEY(id),
 )

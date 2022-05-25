@@ -42,6 +42,12 @@
         public double awayConcededGoalsAvg { get; set; }
         public double awayConcededGoalsAvgAtAway { get; set; }
         public double awayRecentConcededGoalsAvgAtAway { get; set; }
+        public double homeRosterOffenseValue { get; set; }
+        public double homeRosterDefenseValue { get; set; }
+        public double homeRosterGoalieValue { get; set; }
+        public double awayRosterOffenseValue { get; set; }
+        public double awayRosterDefenseValue { get; set; }
+        public double awayRosterGoalieValue { get; set; }
         public int winner { get; set; }
         public bool isExcluded { get; set; }
     }

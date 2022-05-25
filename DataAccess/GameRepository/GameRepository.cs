@@ -59,6 +59,12 @@ namespace DataAccess.GameRepository
                                 .CountAsync();
         }
 
+        public async Task<int> GetCleanedGameCountBySeason(int year)
+        {
+            return await _dbContext.Game.Where(s => s.seasonStartYear == year)
+                                .CountAsync();
+        }
+
         public List<Game> GetCachedGames()
         {
             return _cachedGames;

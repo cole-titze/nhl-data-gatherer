@@ -6,6 +6,7 @@ namespace DataAccess.GameRepository
 	{
 		Task AddGames(List<Game> games);
         Task<int> GetGameCountBySeason(int year);
+        Task<int> GetCleanedGameCountBySeason(int year);
         Task AddFutureGames(List<FutureGame> futureGames);
         Task AddPredictedGames(List<PredictedGame> futureGames);
         Task CacheSeasonOfGames(int season);
