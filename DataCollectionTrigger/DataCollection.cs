@@ -10,6 +10,7 @@ using NhlDataCollection;
 using DataAccess.GameRepository;
 using DataAccess.PlayerRepository;
 using DataAccess;
+using NhlDataCleaning.RequestMaker;
 
 namespace DataCollectionTrigger
 {
@@ -35,6 +36,7 @@ namespace DataCollectionTrigger
             var scheduleRequestMaker = new ScheduleRequestMaker();
             var gameRepo = new GameRepository(gameDbContext);
             var playerRepo = new PlayerValueRepository(playerDbContext);
+            var rosterRequestMaker = new RosterRequestMaker();
             var dateRange = new DateRange()
             {
                 StartYear = 2012,
@@ -46,7 +48,7 @@ namespace DataCollectionTrigger
 
             // Run Data Cleaning
             logger.LogInformation("Starting Data Cleaning");
-            var dataCleaner = new DataCleaner(logger, playerRepo, gameRepo, dateRange);
+            var dataCleaner = new DataCleaner(logger, playerRepo, gameRepo, rosterRequestMaker, dateRange);
             await dataCleaner.CleanData();
             logger.LogInformation("Completed Data Cleaning");
         }
