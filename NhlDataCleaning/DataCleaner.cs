@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using NhlDataCleaning.Mappers;
 using DataAccess.GameRepository;
 using DataAccess.PlayerRepository;
+using NhlDataCleaning.RequestMaker;
 
 namespace NhlDataCleaning
 {
@@ -11,18 +12,20 @@ namespace NhlDataCleaning
     {
         private IPlayerRepository _playerRepo;
         private IGameRepository _gameRepo;
+        private IRosterRequestMaker _rosterRequestMaker;
         private readonly ILogger _logger;
         private readonly DateRange _yearRange;
         private const int CUTOFF_COUNT = 300;
         private const int RECENT_GAMES = 5;
         private const int GAMES_TO_EXCLUDE = 15;
 
-        public DataCleaner(ILogger logger, IPlayerRepository playerRepo, IGameRepository gameRepo, DateRange dateRange)
+        public DataCleaner(ILogger logger, IPlayerRepository playerRepo, IGameRepository gameRepo, IRosterRequestMaker rosterRequestMaker, DateRange dateRange)
         {
             _logger = logger;
             _yearRange = dateRange;
             _gameRepo = gameRepo;
             _playerRepo = playerRepo;
+            _rosterRequestMaker = rosterRequestMaker;
         }
         public async Task CleanData()
         {
@@ -40,6 +43,7 @@ namespace NhlDataCleaning
                 await _gameRepo.CacheSeasonOfGames(year);
                 seasonsGames = _gameRepo.GetCachedGames();
                 games = await CleanGames(seasonsGames);
+                games = await GetRosterValues(games);
                 await _gameRepo.AddCleanedGames(games);
             }
             // Get and create future game records
@@ -55,6 +59,40 @@ namespace NhlDataCleaning
             }
             var futureCleanedGames = await CleanFutureGames(seasonsGames);
             await _gameRepo.AddFutureCleanedGames(futureCleanedGames);
+        }
+
+        private async Task<List<CleanedGame>> GetRosterValues(List<CleanedGame> games)
+        {
+            await _playerRepo.CachePlayerValues();
+            // No foreach because I update game
+            for(int i = 0; i < games.Count(); i++)
+            {
+                var game = games[i];
+                var ids = await _rosterRequestMaker.GetPlayerIds(game.id);
+                foreach(var id in ids.homeRosterIds)
+                {
+                    var position = _playerRepo.GetPositionByIdFromCache(id);
+                    var value = _playerRepo.GetPlayerValueByIdFromCache(id);
+                    if (position == "D")
+                        game.homeRosterDefenseValue += value;
+                    else if (position == "G")
+                        game.homeRosterGoalieValue += value;
+                    else
+                        game.homeRosterOffenseValue += value;
+                }
+                foreach(var id in ids.awayRosterIds)
+                {
+                    var position = _playerRepo.GetPositionByIdFromCache(id);
+                    var value = _playerRepo.GetPlayerValueByIdFromCache(id);
+                    if (position == "D")
+                        game.awayRosterDefenseValue += value;
+                    else if (position == "G")
+                        game.awayRosterGoalieValue += value;
+                    else
+                        game.awayRosterOffenseValue += value;
+                }
+            }
+            return games;
         }
 
         private List<int> GetSeasonIds(List<Game> seasonsGames)
