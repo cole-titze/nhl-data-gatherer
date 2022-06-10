@@ -4,37 +4,30 @@ namespace NhlDataCollection.GameCollection
 {
     public class GameRequestMaker : IGameRequestMaker
 	{
-        private const string _seasonType = "02";
-        private const string _url = "http://statsapi.web.nhl.com/api/v1/game/";
-        // Example Request: http://statsapi.web.nhl.com/api/v1/game/2019020001/feed/live
-        public async Task<HttpResponseMessage> MakeRequest(string query)
+        private const string _url = "http://statsapi.web.nhl.com/api/v1/schedule?season=";
+        // Example Request: http://statsapi.web.nhl.com/api/v1/schedule?season=20172018
+        public async Task<string> MakeRequest(string query)
         {
             HttpResponseMessage response;
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri(_url);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                 //GET Method
                 response = await client.GetAsync(query);
             }
-            return response;
-        }
+            if (!response.IsSuccessStatusCode)
+                return string.Empty;
 
-        public string CreateRequestQuery(int year, int id)
-        {
-            var idStr = BuildId(year, id);
-            // Build request url
-            string urlParameters = $"{idStr}/feed/live";
-
-            return urlParameters;
+            return await response.Content.ReadAsStringAsync();
         }
-        public int BuildId(int year, int id)
+        public string BuildQueryByYear(int year)
         {
-            var yearStr = year.ToString();
-            var idStr = String.Format("{0,0:D4}", id);
-            return Convert.ToInt32($"{yearStr}{_seasonType}{idStr}");
+            int futureYear = year + 1;
+            string yearStr = year.ToString() + futureYear.ToString();
+
+            return _url + yearStr;
         }
     }
 }

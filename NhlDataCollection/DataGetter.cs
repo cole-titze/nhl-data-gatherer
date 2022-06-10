@@ -43,7 +43,9 @@ namespace NhlDataCollection
                 if (gameCount > cutOffCount && year < _yearRange.EndYear)
                     continue;
 
-                var gameList = await GetGamesForSeason(year);
+                //gameList = await GetGamesForSeason(year);
+
+                var gameList = await GetGamesInBulkByYear(year);
                 // Add a years worth of games to db
                 await _gameRepo.AddGames(gameList);
             }
@@ -66,6 +68,14 @@ namespace NhlDataCollection
             return gameList;
         }
 
+        private async Task<List<Game>> GetGamesInBulkByYear(int year)
+        {
+            string query = _gameRequestMaker.BuildQueryByYear(year);
+            string response = await _gameRequestMaker.MakeRequest(query);
+            if (response == string.Empty)
+                return new List<Game>();
+            List<Game> gameList = _gameParser.BuildGames(response);
+        }
         private async Task<List<Game>> GetGamesForSeason(int season)
         {
             await _gameRepo.CacheSeasonOfGames(season);
@@ -89,7 +99,6 @@ namespace NhlDataCollection
             }
             return gameList;
         }
-
         private bool CheckIfRecordExistsInDb(int year, int id)
         {
             Game game = _gameRepo.GetCachedGameById(_gameRequestMaker.BuildId(year, id));
