@@ -5,6 +5,4 @@ CREATE TABLE [dbo].[Team]
     teamName VARCHAR(MAX) NOT NULL,
     logoUri VARCHAR(MAX) NOT NULL,
     PRIMARY KEY(id),
-    FOREIGN KEY (homeTeamId) REFERENCES Team(id),
-    FOREIGN KEY (awayTeamId) REFERENCES Team(id),
 );
