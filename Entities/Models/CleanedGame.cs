@@ -4,8 +4,8 @@
     public class CleanedGame
     {
         public int id { get; set; }
-        public string homeTeamName { get; set; } = string.Empty;
-        public string awayTeamName { get; set; } = string.Empty;
+        public int homeTeamId { get; set; }
+        public int awayTeamId { get; set; }
         public int seasonStartYear { get; set; }
         public DateTime gameDate { get; set; }
         public double homeWinRatio { get; set; }

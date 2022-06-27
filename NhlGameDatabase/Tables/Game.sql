@@ -1,8 +1,8 @@
 ﻿CREATE TABLE [dbo].[Game]
 (
     id INT NOT NULL,
-    homeTeamName VARCHAR(MAX) NOT NULL,
-    awayTeamName VARCHAR(MAX) NOT NULL,
+    homeTeamId INT NOT NULL,
+    awayTeamId INT NOT NULL,
     seasonStartYear INT NOT NULL,
     gameDate DATETIME2 NOT NULL,
     homeGoals INT NOT NULL,
@@ -25,4 +25,6 @@
     homeGiveaways INT NOT NULL,
     awayGiveaways INT NOT NULL,
     PRIMARY KEY(id),
+    FOREIGN KEY (homeTeamId) REFERENCES Team(id),
+    FOREIGN KEY (awayTeamId) REFERENCES Team(id),
 )

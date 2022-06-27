@@ -8,8 +8,8 @@ namespace Entities.Models
     public class Game
     {
         public int id { get; set; } = -1;
-        public string homeTeamName { get; set; } = string.Empty;
-        public string awayTeamName { get; set; } = string.Empty;
+        public int homeTeamId { get; set; }
+        public int awayTeamId { get; set; }
         public int seasonStartYear { get; set; }
         public DateTime gameDate { get; set; }
         public int homeGoals { get; set; }

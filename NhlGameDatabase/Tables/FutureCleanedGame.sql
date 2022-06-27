@@ -1,8 +1,8 @@
 ﻿CREATE TABLE [dbo].[FutureCleanedGame]
 (
     id INT NOT NULL,
-    homeTeamName VARCHAR(MAX) NOT NULL,
-    awayTeamName VARCHAR(MAX) NOT NULL,
+    homeTeamId INT NOT NULL,
+    awayTeamId INT NOT NULL,
     seasonStartYear INT NOT NULL,
     gameDate Datetime NOT NULL,
     homeWinRatio FLOAT NOT NULL,
@@ -46,4 +46,6 @@
     awayRosterDefenseValue FLOAT NOT NULL,
     awayRosterGoalieValue FLOAT NOT NULL,
     PRIMARY KEY(id),
+    FOREIGN KEY (homeTeamId) REFERENCES Team(id),
+    FOREIGN KEY (awayTeamId) REFERENCES Team(id),
 )

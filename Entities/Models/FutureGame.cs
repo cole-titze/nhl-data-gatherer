@@ -3,12 +3,12 @@
     public class FutureGame
     {
         public int id { get; set; }
-        public string homeTeamName { get; set; } = string.Empty;
-        public string awayTeamName { get; set; } = string.Empty;
+        public int homeTeamId { get; set; }
+        public int awayTeamId { get; set; }
         public DateTime gameDate { get; set; }
         public bool IsValid()
         {
-            return homeTeamName != null && homeTeamName != string.Empty;
+            return homeTeamId != 0;
         }
     }
 }

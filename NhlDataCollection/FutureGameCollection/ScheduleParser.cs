@@ -27,8 +27,8 @@ namespace NhlDataCollection.FutureGameCollection
                     var futureGame = new FutureGame()
                     {
                         id = (int)game.gamePk,
-                        homeTeamName = (string)game.teams.home.team.name,
-                        awayTeamName = (string)game.teams.away.team.name,
+                        homeTeamId = (int)game.teams.home.team.id,
+                        awayTeamId = (int)game.teams.away.team.id,
                         gameDate = DateTime.Parse((string)game.gameDate),
                     };
                     gameList.Add(futureGame);
