@@ -12,8 +12,8 @@ namespace Entities
                 var game = new PredictedGame()
                 {
                     id = futureGame.id,
-                    awayTeamName = futureGame.awayTeamName,
-                    homeTeamName = futureGame.homeTeamName,
+                    awayTeamId = futureGame.awayTeamId,
+                    homeTeamId = futureGame.homeTeamId,
                     gameDate = futureGame.gameDate,
                 };
                 predictedGames.Add(game);

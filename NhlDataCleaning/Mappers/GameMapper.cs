@@ -9,8 +9,8 @@ namespace NhlDataCleaning.Mappers
             return new Game
             {
                 id = futureGame.id,
-                homeTeamName = futureGame.homeTeamName,
-                awayTeamName = futureGame.awayTeamName,
+                homeTeamId = futureGame.homeTeamId,
+                awayTeamId = futureGame.awayTeamId,
                 gameDate = futureGame.gameDate,
             };
         }

@@ -4,7 +4,7 @@ namespace NhlDataCleaning.Mappers
 {
     public static class Cleaner
     {
-        public static double GetWinRatioOfRecentGames(List<Game> teamSeasonGames, string teamName, int numberOfGames)
+        public static double GetWinRatioOfRecentGames(List<Game> teamSeasonGames, int teamId, int numberOfGames)
         {
             double winRatio = 0;
             int count = 0;
@@ -12,7 +12,7 @@ namespace NhlDataCleaning.Mappers
             {
                 if (count == numberOfGames)
                     break;
-                if (isWin(game, teamName))
+                if (isWin(game, teamId))
                     winRatio++;
                 count++;
             }
@@ -21,14 +21,14 @@ namespace NhlDataCleaning.Mappers
             return winRatio;
         }
 
-        private static bool isWin(Game game, string teamName)
+        private static bool isWin(Game game, int teamId)
         {
-            if(game.homeTeamName == teamName && game.winner == 0) return true;
-            if(game.awayTeamName == teamName && game.winner == 1) return true;
+            if(game.homeTeamId == teamId && game.winner == 0) return true;
+            if(game.awayTeamId == teamId && game.winner == 1) return true;
             return false;
         }
 
-        public static double GetGoalsAvgOfRecentGames(List<Game> teamGames, string teamName, int numberOfGames)
+        public static double GetGoalsAvgOfRecentGames(List<Game> teamGames, int teamId, int numberOfGames)
         {
             double goalsAvg = 0;
             int count = 0;
@@ -36,9 +36,9 @@ namespace NhlDataCleaning.Mappers
             {
                 if (count == numberOfGames)
                     break;
-                if (game.homeTeamName == teamName)
+                if (game.homeTeamId == teamId)
                     goalsAvg += game.homeGoals;
-                else if (game.awayTeamName == teamName)
+                else if (game.awayTeamId == teamId)
                     goalsAvg += game.awayGoals;
 
                 count++;
@@ -47,7 +47,7 @@ namespace NhlDataCleaning.Mappers
                 goalsAvg = goalsAvg / count;
             return goalsAvg;
         }
-        public static double GetConcededGoalsAvgOfRecentGames(List<Game> teamGames, string teamName, int numberOfGames)
+        public static double GetConcededGoalsAvgOfRecentGames(List<Game> teamGames, int teamId, int numberOfGames)
         {
             double goalsAvg = 0;
             int count = 0;
@@ -55,9 +55,9 @@ namespace NhlDataCleaning.Mappers
             {
                 if (count == numberOfGames)
                     break;
-                if (game.awayTeamName == teamName)
+                if (game.awayTeamId == teamId)
                     goalsAvg += game.homeGoals;
-                else if (game.homeTeamName == teamName)
+                else if (game.homeTeamId == teamId)
                     goalsAvg += game.awayGoals;
 
                 count++;
@@ -67,7 +67,7 @@ namespace NhlDataCleaning.Mappers
             return goalsAvg;
         }
 
-        public static double GetSogAvgOfRecentGames(List<Game> teamGames, string teamName, int numberOfGames)
+        public static double GetSogAvgOfRecentGames(List<Game> teamGames, int teamId, int numberOfGames)
         {
             double sogAvg = 0;
             int count = 0;
@@ -75,9 +75,9 @@ namespace NhlDataCleaning.Mappers
             {
                 if (count == numberOfGames)
                     break;
-                if (game.homeTeamName == teamName)
+                if (game.homeTeamId == teamId)
                     sogAvg += game.homeSOG;
-                else if (game.awayTeamName == teamName)
+                else if (game.awayTeamId == teamId)
                     sogAvg += game.awaySOG;
 
                 count++;
@@ -87,7 +87,7 @@ namespace NhlDataCleaning.Mappers
             return sogAvg;
         }
 
-        public static double GetBlockedShotsAvgOfRecentGames(List<Game> teamGames, string teamName, int numberOfGames)
+        public static double GetBlockedShotsAvgOfRecentGames(List<Game> teamGames, int teamId, int numberOfGames)
         {
             double blockedSogAvg = 0;
             int count = 0;
@@ -95,9 +95,9 @@ namespace NhlDataCleaning.Mappers
             {
                 if (count == numberOfGames)
                     break;
-                if (game.homeTeamName == teamName)
+                if (game.homeTeamId == teamId)
                     blockedSogAvg += game.homeBlockedShots;
-                else if (game.awayTeamName == teamName)
+                else if (game.awayTeamId == teamId)
                     blockedSogAvg += game.awayBlockedShots;
 
                 count++;
@@ -106,7 +106,7 @@ namespace NhlDataCleaning.Mappers
                 blockedSogAvg = blockedSogAvg / count;
             return blockedSogAvg;
         }
-        public static double GetPpgAvgOfRecentGames(List<Game> teamGames, string teamName, int numberOfGames)
+        public static double GetPpgAvgOfRecentGames(List<Game> teamGames, int teamId, int numberOfGames)
         {
             double ppgAvg = 0;
             int count = 0;
@@ -114,9 +114,9 @@ namespace NhlDataCleaning.Mappers
             {
                 if (count == numberOfGames)
                     break;
-                if (game.homeTeamName == teamName)
+                if (game.homeTeamId == teamId)
                     ppgAvg += game.homePPG;
-                else if (game.awayTeamName == teamName)
+                else if (game.awayTeamId == teamId)
                     ppgAvg += game.awayPPG;
 
                 count++;
@@ -125,7 +125,7 @@ namespace NhlDataCleaning.Mappers
                 ppgAvg = ppgAvg / count;
             return ppgAvg;
         }
-        public static double GetHitsAvgOfRecentGames(List<Game> teamGames, string teamName, int numberOfGames)
+        public static double GetHitsAvgOfRecentGames(List<Game> teamGames, int teamId, int numberOfGames)
         {
             double hitsAvg = 0;
             int count = 0;
@@ -133,9 +133,9 @@ namespace NhlDataCleaning.Mappers
             {
                 if (count == numberOfGames)
                     break;
-                if (game.homeTeamName == teamName)
+                if (game.homeTeamId == teamId)
                     hitsAvg += game.homeHits;
-                else if (game.awayTeamName == teamName)
+                else if (game.awayTeamId == teamId)
                     hitsAvg += game.awayHits;
 
                 count++;
@@ -144,7 +144,7 @@ namespace NhlDataCleaning.Mappers
                 hitsAvg = hitsAvg / count;
             return hitsAvg;
         }
-        public static double GetPimAvgOfRecentGames(List<Game> teamGames, string teamName, int numberOfGames)
+        public static double GetPimAvgOfRecentGames(List<Game> teamGames, int teamId, int numberOfGames)
         {
             double pimAvg = 0;
             int count = 0;
@@ -152,9 +152,9 @@ namespace NhlDataCleaning.Mappers
             {
                 if (count == numberOfGames)
                     break;
-                if (game.homeTeamName == teamName)
+                if (game.homeTeamId == teamId)
                     pimAvg += game.homePIM;
-                else if (game.awayTeamName == teamName)
+                else if (game.awayTeamId == teamId)
                     pimAvg += game.awayPIM;
 
                 count++;
@@ -163,7 +163,7 @@ namespace NhlDataCleaning.Mappers
                 pimAvg = pimAvg / count;
             return pimAvg;
         }
-        public static double GetTakeawaysAvgOfRecentGames(List<Game> teamGames, string teamName, int numberOfGames)
+        public static double GetTakeawaysAvgOfRecentGames(List<Game> teamGames, int teamId, int numberOfGames)
         {
             double takeawayAvg = 0;
             int count = 0;
@@ -171,9 +171,9 @@ namespace NhlDataCleaning.Mappers
             {
                 if (count == numberOfGames)
                     break;
-                if (game.homeTeamName == teamName)
+                if (game.homeTeamId == teamId)
                     takeawayAvg += game.homeTakeaways;
-                else if (game.awayTeamName == teamName)
+                else if (game.awayTeamId == teamId)
                     takeawayAvg += game.awayTakeaways;
 
                 count++;
@@ -190,7 +190,7 @@ namespace NhlDataCleaning.Mappers
             return false;
         }
 
-        public static double GetGiveawaysAvgOfRecentGames(List<Game> teamGames, string teamName, int numberOfGames)
+        public static double GetGiveawaysAvgOfRecentGames(List<Game> teamGames, int teamId, int numberOfGames)
         {
             double giveawayAvg = 0;
             int count = 0;
@@ -198,9 +198,9 @@ namespace NhlDataCleaning.Mappers
             {
                 if (count == numberOfGames)
                     break;
-                if (game.homeTeamName == teamName)
+                if (game.homeTeamId == teamId)
                     giveawayAvg += game.homeGiveaways;
-                else if (game.awayTeamName == teamName)
+                else if (game.awayTeamId == teamId)
                     giveawayAvg += game.awayGiveaways;
 
                 count++;
@@ -209,25 +209,25 @@ namespace NhlDataCleaning.Mappers
                 giveawayAvg = giveawayAvg / count;
             return giveawayAvg;
         }
-        public static double GetConcededGoalsAvgOfRecentGamesAtHome(List<Game> teamGames, string teamName, int numberOfGames)
+        public static double GetConcededGoalsAvgOfRecentGamesAtHome(List<Game> teamGames, int teamId, int numberOfGames)
         {
-            teamGames = teamGames.Where(game => game.homeTeamName == teamName).ToList();
-            return GetConcededGoalsAvgOfRecentGames(teamGames, teamName, numberOfGames);
+            teamGames = teamGames.Where(game => game.homeTeamId == teamId).ToList();
+            return GetConcededGoalsAvgOfRecentGames(teamGames, teamId, numberOfGames);
         }
-        public static double GetConcededGoalsAvgOfRecentGamesAtAway(List<Game> teamGames, string teamName, int numberOfGames)
+        public static double GetConcededGoalsAvgOfRecentGamesAtAway(List<Game> teamGames, int teamId, int numberOfGames)
         {
-            teamGames = teamGames.Where(game => game.awayTeamName == teamName).ToList();
-            return GetConcededGoalsAvgOfRecentGames(teamGames, teamName, numberOfGames);
+            teamGames = teamGames.Where(game => game.awayTeamId == teamId).ToList();
+            return GetConcededGoalsAvgOfRecentGames(teamGames, teamId, numberOfGames);
         }
-        public static double GetGoalsAvgOfRecentGamesAtHome(List<Game> teamGames, string teamName, int numberOfGames)
+        public static double GetGoalsAvgOfRecentGamesAtHome(List<Game> teamGames, int teamId, int numberOfGames)
         {
-            teamGames = teamGames.Where(game => game.homeTeamName == teamName).ToList();
-            return GetGoalsAvgOfRecentGames(teamGames, teamName, numberOfGames);
+            teamGames = teamGames.Where(game => game.homeTeamId == teamId).ToList();
+            return GetGoalsAvgOfRecentGames(teamGames, teamId, numberOfGames);
         }
-        public static double GetGoalsAvgOfRecentGamesAtAway(List<Game> teamGames, string teamName, int numberOfGames)
+        public static double GetGoalsAvgOfRecentGamesAtAway(List<Game> teamGames, int teamId, int numberOfGames)
         {
-            teamGames = teamGames.Where(game => game.awayTeamName == teamName).ToList();
-            return GetGoalsAvgOfRecentGames(teamGames, teamName, numberOfGames);
+            teamGames = teamGames.Where(game => game.awayTeamId == teamId).ToList();
+            return GetGoalsAvgOfRecentGames(teamGames, teamId, numberOfGames);
         }
     }
 }
