@@ -39,7 +39,7 @@ namespace DataCollectionTrigger
             var rosterRequestMaker = new RosterRequestMaker();
             var dateRange = new DateRange()
             {
-                StartYear = 2012,
+                StartYear = 2010,
                 EndYear = GetEndSeason(DateTime.UtcNow),
             };
             var dataGetter = new DataGetter(gameParser, scheduleParser, scheduleRequestMaker, gameRequestMaker, playerRepo, gameRepo, dateRange, logger);
