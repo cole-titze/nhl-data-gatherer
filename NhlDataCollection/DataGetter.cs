@@ -17,7 +17,6 @@ namespace NhlDataCollection
         private IGameRepository _gameRepo;
         private IPlayerRepository _playerRepo;
         private const int cutOffCount = 300;
-        private const int _maxGameId = 1400;
         private readonly DateRange _yearRange;
         private readonly ILogger _logger;
         private readonly int _daysToAdd = 0;
@@ -70,15 +69,18 @@ namespace NhlDataCollection
         {
             await _gameRepo.CacheSeasonOfGames(season);
             var gameList = new List<Game>();
+            var query = _scheduleRequestMaker.CreateRequestQueryToGetTotalGames(season);
+            var response = await _scheduleRequestMaker.MakeRequest(query);
+            var maxGameId = await _scheduleParser.GetNumberOfGamesInSeason(response);
 
-            for (int id = 0; id < _maxGameId; id++)
+            for (int id = 0; id < maxGameId; id++)
             {
                 var recordExists = CheckIfRecordExistsInDb(season, id);
                 if (recordExists)
                     continue;
 
-                var query = _gameRequestMaker.CreateRequestQuery(season, id);
-                var response = await _gameRequestMaker.MakeRequest(query);
+                query = _gameRequestMaker.CreateRequestQuery(season, id);
+                response = await _gameRequestMaker.MakeRequest(query);
 
                 if (response.IsSuccessStatusCode)
                 {

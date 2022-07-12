@@ -4,5 +4,6 @@
     {
         string CreateRequestQuery(DateTime tomorrow);
         Task<HttpResponseMessage> MakeRequest(string query);
+        string CreateRequestQueryToGetTotalGames(int year);
     }
 }

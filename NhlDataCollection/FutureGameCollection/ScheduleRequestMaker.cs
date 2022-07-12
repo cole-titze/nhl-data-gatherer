@@ -29,9 +29,10 @@ namespace NhlDataCollection.FutureGameCollection
             return query;
         }
 
-        public string CreateRequestQuery(int year, int id)
+        public string CreateRequestQueryToGetTotalGames(int year)
         {
-            throw new NotImplementedException();
+            int nextYear = year + 1;
+            return $"?season={year}{nextYear}&gameType=R";
         }
     }
 }

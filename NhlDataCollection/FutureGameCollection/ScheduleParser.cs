@@ -5,6 +5,7 @@ namespace NhlDataCollection.FutureGameCollection
 {
     public class ScheduleParser : IScheduleParser
     {
+        private const int DefaultGameCount = 1400;
         public async Task<List<FutureGame>> BuildFutureGames(HttpResponseMessage response)
         {
             // Get data as Json string 
@@ -42,6 +43,22 @@ namespace NhlDataCollection.FutureGameCollection
             if (message == null)
                 return true;
             return (int)message.totalItems == 0;
+        }
+
+        public async Task<int> GetNumberOfGamesInSeason(HttpResponseMessage response)
+        {
+            // Give a default in case request fails
+            if (!response.IsSuccessStatusCode)
+                return DefaultGameCount;
+
+            // Get data as Json string 
+            string data = await response.Content.ReadAsStringAsync();
+            // Add Json string conversion to hard object
+            var message = JsonConvert.DeserializeObject<dynamic>(data);
+            if (message == null)
+                return DefaultGameCount;
+
+            return Convert.ToInt32(message.totalItems);
         }
     }
 }
