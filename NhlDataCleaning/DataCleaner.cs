@@ -31,6 +31,7 @@ namespace NhlDataCleaning
         {
             List<CleanedGame> games;
             List<Game> seasonsGames;
+            List<Game> lastSeasonsGames;
             // Get and clean games
             for (int year = _yearRange.StartYear; year <= _yearRange.EndYear; year++)
             {
@@ -41,15 +42,18 @@ namespace NhlDataCleaning
 
                 _logger.LogInformation("Cleaning Year: " + year.ToString());
                 await _gameRepo.CacheSeasonOfGames(year);
-                seasonsGames = _gameRepo.GetCachedGames();
-                games = await CleanGames(seasonsGames);
+                await _gameRepo.CacheLastSeasonOfGames(year - 1);
+                seasonsGames = _gameRepo.GetCachedSeasonsGames();
+                lastSeasonsGames = _gameRepo.GetCachedLastSeasonsGames();
+                games = await CleanGames(seasonsGames, lastSeasonsGames);
                 games = await GetRosterValues(games);
                 await _gameRepo.AddCleanedGames(games);
             }
             // Get and create future game records
             // TODO: I'm redoing the last seasons work here. Should be included above or something
             var futureGames = await _gameRepo.GetFutureGames();
-            seasonsGames = _gameRepo.GetCachedGames();
+            seasonsGames = _gameRepo.GetCachedSeasonsGames();
+            lastSeasonsGames = _gameRepo.GetCachedLastSeasonsGames();
             var ids = GetSeasonIds(seasonsGames);
             foreach(var game in futureGames)
             {
@@ -103,15 +107,16 @@ namespace NhlDataCleaning
             return ids;
         }
 
-        private async Task<List<CleanedGame>> CleanGames(List<Game> seasonsGames)
+        private async Task<List<CleanedGame>> CleanGames(List<Game> seasonsGames, List<Game> lastSeasonsGames)
         {
             var cleanedGames = new List<CleanedGame>();
             seasonsGames = seasonsGames.OrderBy(i => i.id).Reverse().ToList();
-            foreach(var game in seasonsGames)
+            lastSeasonsGames = lastSeasonsGames.OrderBy(i => i.id).Reverse().ToList();
+            foreach (var game in seasonsGames)
             {
                 if (await CleanedGameExists(game))
                     continue;
-                var cleanedGame = GetCleanGame(seasonsGames, game);
+                var cleanedGame = GetCleanGame(seasonsGames, lastSeasonsGames, game);
                 cleanedGames.Add(cleanedGame);
             }
 
@@ -132,10 +137,26 @@ namespace NhlDataCleaning
             return cleanedGames;
         }
 
-        private CleanedGame GetCleanGame(List<Game> seasonsGames, Game game)
+        private CleanedGame GetCleanGame(List<Game> seasonsGames, List<Game> lastSeasonsGames, Game game)
         {
             var homeGames = GetTeamGames(seasonsGames, game.homeTeamId, game.id);
             var awayGames = GetTeamGames(seasonsGames, game.awayTeamId, game.id);
+            bool isExcluded = false;
+            List<Game> lastSeasonHomeGames;
+            List<Game> lastSeasonAwayGames;
+            if (homeGames.Count() < GAMES_TO_EXCLUDE)
+            {
+                lastSeasonHomeGames = GetTeamGames(lastSeasonsGames, game.homeTeamId, game.id);
+                homeGames = lastSeasonHomeGames.Concat(homeGames).ToList();
+                isExcluded = true;
+            }
+            if (awayGames.Count() < GAMES_TO_EXCLUDE)
+            {
+                lastSeasonAwayGames = GetTeamGames(lastSeasonsGames, game.awayTeamId, game.id);
+                awayGames = lastSeasonAwayGames.Concat(awayGames).ToList();
+                isExcluded = true;
+            }
+
             var cleanedGame = new CleanedGame()
             {
                 id = game.id,
@@ -181,7 +202,7 @@ namespace NhlDataCleaning
                 awayRecentGoalsAvgAtAway = Cleaner.GetGoalsAvgOfRecentGamesAtAway(awayGames, game.awayTeamId, RECENT_GAMES),
 
                 winner = game.winner,
-                isExcluded = Cleaner.GetIsExcluded(awayGames, homeGames, GAMES_TO_EXCLUDE),
+                isExcluded = isExcluded
             };
             return cleanedGame;
         }
