@@ -10,8 +10,10 @@ namespace DataAccess.GameRepository
         Task AddFutureGames(List<FutureGame> futureGames);
         Task AddPredictedGames(List<PredictedGame> futureGames);
         Task CacheSeasonOfGames(int season);
+        Task CacheLastSeasonOfGames(int season);
         Game GetCachedGameById(int v);
-        List<Game> GetCachedGames();
+        List<Game> GetCachedSeasonsGames();
+        List<Game> GetCachedLastSeasonsGames();
         Task AddCleanedGames(List<CleanedGame> games);
         Task<List<FutureGame>> GetFutureGames();
         Task AddFutureCleanedGames(List<FutureCleanedGame> futureCleanedGames);

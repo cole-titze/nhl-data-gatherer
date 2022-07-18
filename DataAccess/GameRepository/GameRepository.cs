@@ -5,7 +5,8 @@ namespace DataAccess.GameRepository
 {
 	public class GameRepository : IGameRepository
 	{
-        private List<Game> _cachedGames = new List<Game>();
+        private List<Game> _cachedSeasonsGames = new List<Game>();
+        private List<Game> _cachedLastSeasonsGames = new List<Game>();
         private readonly GameDbContext _dbContext;
         public GameRepository(GameDbContext dbContext)
         {
@@ -42,12 +43,16 @@ namespace DataAccess.GameRepository
 
         public async Task CacheSeasonOfGames(int season)
         {
-            _cachedGames = await _dbContext.Game.Where(s => s.seasonStartYear == season).ToListAsync();
+            _cachedSeasonsGames = await _dbContext.Game.Where(s => s.seasonStartYear == season).ToListAsync();
+        }
+        public async Task CacheLastSeasonOfGames(int season)
+        {
+            _cachedLastSeasonsGames = await _dbContext.Game.Where(s => s.seasonStartYear == season).ToListAsync();
         }
 
         public Game GetCachedGameById(int id)
         {
-            var game = _cachedGames.FirstOrDefault(i => i.id == id);
+            var game = _cachedSeasonsGames.FirstOrDefault(i => i.id == id);
             if (game == null)
                 return new Game();
             return game;
@@ -65,9 +70,13 @@ namespace DataAccess.GameRepository
                                 .CountAsync();
         }
 
-        public List<Game> GetCachedGames()
+        public List<Game> GetCachedSeasonsGames()
         {
-            return _cachedGames;
+            return _cachedSeasonsGames;
+        }
+        public List<Game> GetCachedLastSeasonsGames()
+        {
+            return _cachedLastSeasonsGames;
         }
 
         public async Task AddCleanedGames(List<CleanedGame> games)
