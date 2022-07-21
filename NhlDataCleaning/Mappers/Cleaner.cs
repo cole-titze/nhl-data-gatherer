@@ -5,7 +5,7 @@ namespace NhlDataCleaning.Mappers
     public static class Cleaner
     {
         // If no game has been played set default as 4 days of rest (season hasn't started)
-        public static readonly int DEFAULT_DAYS = 4;
+        public static readonly int DEFAULT_HOURS = 100;
         public static double GetWinRatioOfRecentGames(List<Game> teamSeasonGames, int teamId, int numberOfGames)
         {
             double winRatio = 0;
@@ -236,7 +236,7 @@ namespace NhlDataCleaning.Mappers
         public static double GetHoursBetweenLastTwoGames(List<Game> games)
         {
             if (games.Count() < 2)
-                return DEFAULT_DAYS;
+                return DEFAULT_HOURS;
             var currentDate = games[0].gameDate;
             var lastDate = games[1].gameDate;
 
