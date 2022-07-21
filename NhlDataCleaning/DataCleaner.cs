@@ -110,8 +110,8 @@ namespace NhlDataCleaning
         private async Task<List<CleanedGame>> CleanGames(List<Game> seasonsGames, List<Game> lastSeasonsGames)
         {
             var cleanedGames = new List<CleanedGame>();
-            seasonsGames = seasonsGames.OrderBy(i => i.id).Reverse().ToList();
-            lastSeasonsGames = lastSeasonsGames.OrderBy(i => i.id).Reverse().ToList();
+            seasonsGames = seasonsGames.OrderBy(i => i.gameDate).Reverse().ToList();
+            lastSeasonsGames = lastSeasonsGames.OrderBy(i => i.gameDate).Reverse().ToList();
             foreach (var game in seasonsGames)
             {
                 if (await CleanedGameExists(game))
@@ -125,7 +125,8 @@ namespace NhlDataCleaning
         private async Task<List<FutureCleanedGame>> CleanFutureGames(List<Game> seasonsGames, List<Game> lastSeasonsGames)
         {
             var cleanedGames = new List<FutureCleanedGame>();
-            seasonsGames = seasonsGames.OrderBy(i => i.id).Reverse().ToList();
+            seasonsGames = seasonsGames.OrderBy(i => i.gameDate).Reverse().ToList();
+            lastSeasonsGames = lastSeasonsGames.OrderBy(i => i.gameDate).Reverse().ToList();
             foreach (var game in seasonsGames)
             {
                 if (await FutureCleanedGameExists(game))
@@ -139,20 +140,24 @@ namespace NhlDataCleaning
 
         private CleanedGame GetCleanGame(List<Game> seasonsGames, List<Game> lastSeasonsGames, Game game)
         {
-            var homeGames = GetTeamGames(seasonsGames, game.homeTeamId, game.id);
-            var awayGames = GetTeamGames(seasonsGames, game.awayTeamId, game.id);
+            var homeGames = GetTeamGames(seasonsGames, game.homeTeamId, game.gameDate);
+            var awayGames = GetTeamGames(seasonsGames, game.awayTeamId, game.gameDate);
             bool isExcluded = false;
             List<Game> lastSeasonHomeGames;
             List<Game> lastSeasonAwayGames;
+            var homeHoursBetweenGames = Cleaner.GetHoursBetweenLastTwoGames(homeGames);
+            var awayHoursBetweenGames = Cleaner.GetHoursBetweenLastTwoGames(awayGames);
+
+
             if (homeGames.Count() < GAMES_TO_EXCLUDE)
             {
-                lastSeasonHomeGames = GetTeamGames(lastSeasonsGames, game.homeTeamId, game.id);
+                lastSeasonHomeGames = GetTeamGames(lastSeasonsGames, game.homeTeamId, game.gameDate);
                 homeGames = lastSeasonHomeGames.Concat(homeGames).ToList();
                 isExcluded = true;
             }
             if (awayGames.Count() < GAMES_TO_EXCLUDE)
             {
-                lastSeasonAwayGames = GetTeamGames(lastSeasonsGames, game.awayTeamId, game.id);
+                lastSeasonAwayGames = GetTeamGames(lastSeasonsGames, game.awayTeamId, game.gameDate);
                 awayGames = lastSeasonAwayGames.Concat(awayGames).ToList();
                 isExcluded = true;
             }
@@ -182,7 +187,7 @@ namespace NhlDataCleaning
                 homeRecentConcededGoalsAvgAtHome = Cleaner.GetConcededGoalsAvgOfRecentGamesAtHome(homeGames, game.homeTeamId, RECENT_GAMES),
                 homeGoalsAvgAtHome = Cleaner.GetGoalsAvgOfRecentGamesAtHome(homeGames, game.homeTeamId, homeGames.Count()),
                 homeRecentGoalsAvgAtHome = Cleaner.GetGoalsAvgOfRecentGamesAtHome(homeGames, game.homeTeamId, RECENT_GAMES),
-                homeHoursSinceLastGame = Cleaner.GetHoursBetweenLastTwoGames(homeGames),
+                homeHoursSinceLastGame = homeHoursBetweenGames,
 
                 awayWinRatio = Cleaner.GetWinRatioOfRecentGames(awayGames, game.awayTeamId, awayGames.Count()),
                 awayRecentWinRatio = Cleaner.GetWinRatioOfRecentGames(awayGames, game.awayTeamId, RECENT_GAMES),
@@ -201,7 +206,7 @@ namespace NhlDataCleaning
                 awayRecentConcededGoalsAvgAtAway = Cleaner.GetConcededGoalsAvgOfRecentGamesAtAway(awayGames, game.awayTeamId, RECENT_GAMES),
                 awayGoalsAvgAtAway = Cleaner.GetGoalsAvgOfRecentGamesAtAway(awayGames, game.awayTeamId, awayGames.Count()),
                 awayRecentGoalsAvgAtAway = Cleaner.GetGoalsAvgOfRecentGamesAtAway(awayGames, game.awayTeamId, RECENT_GAMES),
-                awayHoursSinceLastGame = Cleaner.GetHoursBetweenLastTwoGames(awayGames),
+                awayHoursSinceLastGame = awayHoursBetweenGames,
                 winner = game.winner,
                 isExcluded = isExcluded
             };
@@ -210,22 +215,19 @@ namespace NhlDataCleaning
 
         private FutureCleanedGame GetFutureCleanGame(List<Game> seasonsGames, List<Game> lastSeasonsGames, Game game)
         {
-            var homeGames = GetTeamGames(seasonsGames, game.homeTeamId, game.id);
-            var awayGames = GetTeamGames(seasonsGames, game.awayTeamId, game.id);
-            bool isExcluded = false;
+            var homeGames = GetTeamGames(seasonsGames, game.homeTeamId, game.gameDate);
+            var awayGames = GetTeamGames(seasonsGames, game.awayTeamId, game.gameDate);
             List<Game> lastSeasonHomeGames;
             List<Game> lastSeasonAwayGames;
             if (homeGames.Count() < GAMES_TO_EXCLUDE)
             {
-                lastSeasonHomeGames = GetTeamGames(lastSeasonsGames, game.homeTeamId, game.id);
+                lastSeasonHomeGames = GetTeamGames(lastSeasonsGames, game.homeTeamId, game.gameDate);
                 homeGames = lastSeasonHomeGames.Concat(homeGames).ToList();
-                isExcluded = true;
             }
             if (awayGames.Count() < GAMES_TO_EXCLUDE)
             {
-                lastSeasonAwayGames = GetTeamGames(lastSeasonsGames, game.awayTeamId, game.id);
+                lastSeasonAwayGames = GetTeamGames(lastSeasonsGames, game.awayTeamId, game.gameDate);
                 awayGames = lastSeasonAwayGames.Concat(awayGames).ToList();
-                isExcluded = true;
             }
             var cleanedGame = new FutureCleanedGame()
             {
@@ -285,10 +287,10 @@ namespace NhlDataCleaning
         {
             return await _gameRepo.GetIfFutureCleanedGameExistsById(game.id);
         }
-        private List<Game> GetTeamGames(List<Game> seasonsGames, int teamId, int id)
+        private List<Game> GetTeamGames(List<Game> seasonsGames, int teamId, DateTime currentGameDate)
         {
             // Get games that happened before current game and include the team
-            return seasonsGames.Where(i => i.id < id)
+            return seasonsGames.Where(i => i.gameDate < currentGameDate)
                 .Where(n => n.awayTeamId == teamId || n.homeTeamId == teamId).ToList();
         }
     }
