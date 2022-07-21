@@ -4,6 +4,8 @@ namespace NhlDataCleaning.Mappers
 {
     public static class Cleaner
     {
+        // If no game has been played set default as 4 days of rest (season hasn't started)
+        public static readonly int DEFAULT_DAYS = 4;
         public static double GetWinRatioOfRecentGames(List<Game> teamSeasonGames, int teamId, int numberOfGames)
         {
             double winRatio = 0;
@@ -228,6 +230,19 @@ namespace NhlDataCleaning.Mappers
         {
             teamGames = teamGames.Where(game => game.awayTeamId == teamId).ToList();
             return GetGoalsAvgOfRecentGames(teamGames, teamId, numberOfGames);
+        }
+        // If only one game has been played return default rest, otherwise find how many hours
+        // since last game
+        public static double GetHoursBetweenLastTwoGames(List<Game> games)
+        {
+            if (games.Count() < 2)
+                return DEFAULT_DAYS;
+            var currentDate = games[0].gameDate;
+            var lastDate = games[1].gameDate;
+
+            var hourDifference = (currentDate - lastDate).TotalHours;
+
+            return hourDifference;
         }
     }
 }

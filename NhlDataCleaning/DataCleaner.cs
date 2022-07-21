@@ -61,7 +61,7 @@ namespace NhlDataCleaning
                 if(!ids.Contains(mappedGame.id))
                     seasonsGames.Add(mappedGame);
             }
-            var futureCleanedGames = await CleanFutureGames(seasonsGames);
+            var futureCleanedGames = await CleanFutureGames(seasonsGames, lastSeasonsGames);
             await _gameRepo.AddFutureCleanedGames(futureCleanedGames);
         }
 
@@ -122,7 +122,7 @@ namespace NhlDataCleaning
 
             return cleanedGames;
         }
-        private async Task<List<FutureCleanedGame>> CleanFutureGames(List<Game> seasonsGames)
+        private async Task<List<FutureCleanedGame>> CleanFutureGames(List<Game> seasonsGames, List<Game> lastSeasonsGames)
         {
             var cleanedGames = new List<FutureCleanedGame>();
             seasonsGames = seasonsGames.OrderBy(i => i.id).Reverse().ToList();
@@ -130,7 +130,7 @@ namespace NhlDataCleaning
             {
                 if (await FutureCleanedGameExists(game))
                     continue;
-                var cleanedGame = GetFutureCleanGame(seasonsGames, game);
+                var cleanedGame = GetFutureCleanGame(seasonsGames, lastSeasonsGames, game);
                 cleanedGames.Add(cleanedGame);
             }
 
@@ -182,6 +182,7 @@ namespace NhlDataCleaning
                 homeRecentConcededGoalsAvgAtHome = Cleaner.GetConcededGoalsAvgOfRecentGamesAtHome(homeGames, game.homeTeamId, RECENT_GAMES),
                 homeGoalsAvgAtHome = Cleaner.GetGoalsAvgOfRecentGamesAtHome(homeGames, game.homeTeamId, homeGames.Count()),
                 homeRecentGoalsAvgAtHome = Cleaner.GetGoalsAvgOfRecentGamesAtHome(homeGames, game.homeTeamId, RECENT_GAMES),
+                homeHoursSinceLastGame = Cleaner.GetHoursBetweenLastTwoGames(homeGames),
 
                 awayWinRatio = Cleaner.GetWinRatioOfRecentGames(awayGames, game.awayTeamId, awayGames.Count()),
                 awayRecentWinRatio = Cleaner.GetWinRatioOfRecentGames(awayGames, game.awayTeamId, RECENT_GAMES),
@@ -200,17 +201,32 @@ namespace NhlDataCleaning
                 awayRecentConcededGoalsAvgAtAway = Cleaner.GetConcededGoalsAvgOfRecentGamesAtAway(awayGames, game.awayTeamId, RECENT_GAMES),
                 awayGoalsAvgAtAway = Cleaner.GetGoalsAvgOfRecentGamesAtAway(awayGames, game.awayTeamId, awayGames.Count()),
                 awayRecentGoalsAvgAtAway = Cleaner.GetGoalsAvgOfRecentGamesAtAway(awayGames, game.awayTeamId, RECENT_GAMES),
-
+                awayHoursSinceLastGame = Cleaner.GetHoursBetweenLastTwoGames(awayGames),
                 winner = game.winner,
                 isExcluded = isExcluded
             };
             return cleanedGame;
         }
 
-        private FutureCleanedGame GetFutureCleanGame(List<Game> seasonsGames, Game game)
+        private FutureCleanedGame GetFutureCleanGame(List<Game> seasonsGames, List<Game> lastSeasonsGames, Game game)
         {
             var homeGames = GetTeamGames(seasonsGames, game.homeTeamId, game.id);
             var awayGames = GetTeamGames(seasonsGames, game.awayTeamId, game.id);
+            bool isExcluded = false;
+            List<Game> lastSeasonHomeGames;
+            List<Game> lastSeasonAwayGames;
+            if (homeGames.Count() < GAMES_TO_EXCLUDE)
+            {
+                lastSeasonHomeGames = GetTeamGames(lastSeasonsGames, game.homeTeamId, game.id);
+                homeGames = lastSeasonHomeGames.Concat(homeGames).ToList();
+                isExcluded = true;
+            }
+            if (awayGames.Count() < GAMES_TO_EXCLUDE)
+            {
+                lastSeasonAwayGames = GetTeamGames(lastSeasonsGames, game.awayTeamId, game.id);
+                awayGames = lastSeasonAwayGames.Concat(awayGames).ToList();
+                isExcluded = true;
+            }
             var cleanedGame = new FutureCleanedGame()
             {
                 id = game.id,
@@ -236,6 +252,7 @@ namespace NhlDataCleaning
                 homeRecentConcededGoalsAvgAtHome = Cleaner.GetConcededGoalsAvgOfRecentGamesAtHome(homeGames, game.homeTeamId, RECENT_GAMES),
                 homeGoalsAvgAtHome = Cleaner.GetGoalsAvgOfRecentGamesAtHome(homeGames, game.homeTeamId, homeGames.Count()),
                 homeRecentGoalsAvgAtHome = Cleaner.GetGoalsAvgOfRecentGamesAtHome(homeGames, game.homeTeamId, RECENT_GAMES),
+                homeHoursSinceLastGame = Cleaner.GetHoursBetweenLastTwoGames(seasonsGames),
 
                 awayWinRatio = Cleaner.GetWinRatioOfRecentGames(awayGames, game.awayTeamId, awayGames.Count()),
                 awayRecentWinRatio = Cleaner.GetWinRatioOfRecentGames(awayGames, game.awayTeamId, RECENT_GAMES),
@@ -254,6 +271,7 @@ namespace NhlDataCleaning
                 awayRecentConcededGoalsAvgAtAway = Cleaner.GetConcededGoalsAvgOfRecentGamesAtAway(awayGames, game.awayTeamId, RECENT_GAMES),
                 awayGoalsAvgAtAway = Cleaner.GetGoalsAvgOfRecentGamesAtAway(awayGames, game.awayTeamId, awayGames.Count()),
                 awayRecentGoalsAvgAtAway = Cleaner.GetGoalsAvgOfRecentGamesAtAway(awayGames, game.awayTeamId, RECENT_GAMES),
+                awayHoursSinceLastGame = Cleaner.GetHoursBetweenLastTwoGames(seasonsGames),
             };
             return cleanedGame;
         }
