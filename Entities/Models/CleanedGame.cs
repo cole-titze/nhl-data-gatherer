@@ -25,6 +25,7 @@
         public double homeConcededGoalsAvg { get; set; }
         public double homeConcededGoalsAvgAtHome { get; set; }
         public double homeRecentConcededGoalsAvgAtHome { get; set; }
+        public double homeHoursSinceLastGame { get; set; }
         public double awayWinRatio { get; set; }
         public double awayRecentWinRatio { get; set; }
         public double awayRecentGoalsAvg { get; set; }
@@ -48,6 +49,7 @@
         public double awayRosterOffenseValue { get; set; }
         public double awayRosterDefenseValue { get; set; }
         public double awayRosterGoalieValue { get; set; }
+        public double awayHoursSinceLastGame { get; set; }
         public int winner { get; set; }
         public bool isExcluded { get; set; }
     }
