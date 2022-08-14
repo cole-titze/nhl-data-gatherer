@@ -31,6 +31,7 @@ namespace Entities.Models
         public int awayTakeaways { get; set; }
         public int homeGiveaways { get; set; }
         public int awayGiveaways { get; set; }
+        public bool hasBeenPlayed { get; set; }
 
         public bool IsValid()
         {

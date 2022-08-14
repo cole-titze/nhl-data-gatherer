@@ -49,20 +49,6 @@ namespace NhlDataCleaning
                 games = await GetRosterValues(games);
                 await _gameRepo.AddCleanedGames(games);
             }
-            // Get and create future game records
-            // TODO: I'm redoing the last seasons work here. Should be included above or something
-            var futureGames = await _gameRepo.GetFutureGames();
-            seasonsGames = _gameRepo.GetCachedSeasonsGames();
-            lastSeasonsGames = _gameRepo.GetCachedLastSeasonsGames();
-            var ids = GetSeasonIds(seasonsGames);
-            foreach(var game in futureGames)
-            {
-                var mappedGame = GameMapper.FutureGameToGame(game);
-                if(!ids.Contains(mappedGame.id))
-                    seasonsGames.Add(mappedGame);
-            }
-            var futureCleanedGames = await CleanFutureGames(seasonsGames, lastSeasonsGames);
-            await _gameRepo.AddFutureCleanedGames(futureCleanedGames);
         }
 
         private async Task<List<CleanedGame>> GetRosterValues(List<CleanedGame> games)
@@ -117,21 +103,6 @@ namespace NhlDataCleaning
                 if (await CleanedGameExists(game))
                     continue;
                 var cleanedGame = GetCleanGame(seasonsGames, lastSeasonsGames, game);
-                cleanedGames.Add(cleanedGame);
-            }
-
-            return cleanedGames;
-        }
-        private async Task<List<FutureCleanedGame>> CleanFutureGames(List<Game> seasonsGames, List<Game> lastSeasonsGames)
-        {
-            var cleanedGames = new List<FutureCleanedGame>();
-            seasonsGames = seasonsGames.OrderBy(i => i.gameDate).Reverse().ToList();
-            lastSeasonsGames = lastSeasonsGames.OrderBy(i => i.gameDate).Reverse().ToList();
-            foreach (var game in seasonsGames)
-            {
-                if (await FutureCleanedGameExists(game))
-                    continue;
-                var cleanedGame = GetFutureCleanGame(seasonsGames, lastSeasonsGames, game);
                 cleanedGames.Add(cleanedGame);
             }
 
@@ -208,84 +179,15 @@ namespace NhlDataCleaning
                 awayRecentGoalsAvgAtAway = Cleaner.GetGoalsAvgOfRecentGamesAtAway(awayGames, game.awayTeamId, RECENT_GAMES),
                 awayHoursSinceLastGame = awayHoursBetweenGames,
                 winner = game.winner,
-                isExcluded = isExcluded
+                isExcluded = isExcluded,
+                hasBeenPlayed = game.hasBeenPlayed,
             };
             return cleanedGame;
         }
-
-        private FutureCleanedGame GetFutureCleanGame(List<Game> seasonsGames, List<Game> lastSeasonsGames, Game game)
-        {
-            var homeGames = GetTeamGames(seasonsGames, game.homeTeamId, game.gameDate);
-            var awayGames = GetTeamGames(seasonsGames, game.awayTeamId, game.gameDate);
-            List<Game> lastSeasonHomeGames;
-            List<Game> lastSeasonAwayGames;
-            if (homeGames.Count() < GAMES_TO_EXCLUDE)
-            {
-                lastSeasonHomeGames = GetTeamGames(lastSeasonsGames, game.homeTeamId, game.gameDate);
-                homeGames = lastSeasonHomeGames.Concat(homeGames).ToList();
-            }
-            if (awayGames.Count() < GAMES_TO_EXCLUDE)
-            {
-                lastSeasonAwayGames = GetTeamGames(lastSeasonsGames, game.awayTeamId, game.gameDate);
-                awayGames = lastSeasonAwayGames.Concat(awayGames).ToList();
-            }
-            var cleanedGame = new FutureCleanedGame()
-            {
-                id = game.id,
-                homeTeamId = game.homeTeamId,
-                awayTeamId = game.awayTeamId,
-                seasonStartYear = game.seasonStartYear,
-                gameDate = game.gameDate,
-
-                homeWinRatio = Cleaner.GetWinRatioOfRecentGames(homeGames, game.homeTeamId, homeGames.Count()),
-                homeRecentWinRatio = Cleaner.GetWinRatioOfRecentGames(homeGames, game.homeTeamId, RECENT_GAMES),
-                homeGoalsAvg = Cleaner.GetGoalsAvgOfRecentGames(homeGames, game.homeTeamId, homeGames.Count()),
-                homeRecentGoalsAvg = Cleaner.GetGoalsAvgOfRecentGames(homeGames, game.homeTeamId, RECENT_GAMES),
-                homeConcededGoalsAvg = Cleaner.GetConcededGoalsAvgOfRecentGames(homeGames, game.homeTeamId, homeGames.Count()),
-                homeRecentConcededGoalsAvg = Cleaner.GetConcededGoalsAvgOfRecentGames(homeGames, game.homeTeamId, RECENT_GAMES),
-                homeRecentSogAvg = Cleaner.GetSogAvgOfRecentGames(homeGames, game.homeTeamId, RECENT_GAMES),
-                homeRecentBlockedShotsAvg = Cleaner.GetBlockedShotsAvgOfRecentGames(homeGames, game.homeTeamId, RECENT_GAMES),
-                homeRecentPpgAvg = Cleaner.GetPpgAvgOfRecentGames(homeGames, game.homeTeamId, RECENT_GAMES),
-                homeRecentHitsAvg = Cleaner.GetHitsAvgOfRecentGames(homeGames, game.homeTeamId, RECENT_GAMES),
-                homeRecentPimAvg = Cleaner.GetPimAvgOfRecentGames(homeGames, game.homeTeamId, RECENT_GAMES),
-                homeRecentTakeawaysAvg = Cleaner.GetTakeawaysAvgOfRecentGames(homeGames, game.homeTeamId, RECENT_GAMES),
-                homeRecentGiveawaysAvg = Cleaner.GetGiveawaysAvgOfRecentGames(homeGames, game.homeTeamId, RECENT_GAMES),
-                homeConcededGoalsAvgAtHome = Cleaner.GetConcededGoalsAvgOfRecentGamesAtHome(homeGames, game.homeTeamId, homeGames.Count()),
-                homeRecentConcededGoalsAvgAtHome = Cleaner.GetConcededGoalsAvgOfRecentGamesAtHome(homeGames, game.homeTeamId, RECENT_GAMES),
-                homeGoalsAvgAtHome = Cleaner.GetGoalsAvgOfRecentGamesAtHome(homeGames, game.homeTeamId, homeGames.Count()),
-                homeRecentGoalsAvgAtHome = Cleaner.GetGoalsAvgOfRecentGamesAtHome(homeGames, game.homeTeamId, RECENT_GAMES),
-                homeHoursSinceLastGame = Cleaner.GetHoursBetweenLastTwoGames(seasonsGames),
-
-                awayWinRatio = Cleaner.GetWinRatioOfRecentGames(awayGames, game.awayTeamId, awayGames.Count()),
-                awayRecentWinRatio = Cleaner.GetWinRatioOfRecentGames(awayGames, game.awayTeamId, RECENT_GAMES),
-                awayGoalsAvg = Cleaner.GetGoalsAvgOfRecentGames(awayGames, game.awayTeamId, awayGames.Count()),
-                awayRecentGoalsAvg = Cleaner.GetGoalsAvgOfRecentGames(awayGames, game.awayTeamId, RECENT_GAMES),
-                awayConcededGoalsAvg = Cleaner.GetConcededGoalsAvgOfRecentGames(awayGames, game.awayTeamId, awayGames.Count()),
-                awayRecentConcededGoalsAvg = Cleaner.GetConcededGoalsAvgOfRecentGames(awayGames, game.awayTeamId, RECENT_GAMES),
-                awayRecentSogAvg = Cleaner.GetSogAvgOfRecentGames(awayGames, game.awayTeamId, RECENT_GAMES),
-                awayRecentBlockedShotsAvg = Cleaner.GetBlockedShotsAvgOfRecentGames(awayGames, game.awayTeamId, RECENT_GAMES),
-                awayRecentPpgAvg = Cleaner.GetPpgAvgOfRecentGames(awayGames, game.awayTeamId, RECENT_GAMES),
-                awayRecentHitsAvg = Cleaner.GetHitsAvgOfRecentGames(awayGames, game.awayTeamId, RECENT_GAMES),
-                awayRecentPimAvg = Cleaner.GetPimAvgOfRecentGames(awayGames, game.awayTeamId, RECENT_GAMES),
-                awayRecentTakeawaysAvg = Cleaner.GetTakeawaysAvgOfRecentGames(awayGames, game.awayTeamId, RECENT_GAMES),
-                awayRecentGiveawaysAvg = Cleaner.GetGiveawaysAvgOfRecentGames(awayGames, game.awayTeamId, RECENT_GAMES),
-                awayConcededGoalsAvgAtAway = Cleaner.GetConcededGoalsAvgOfRecentGamesAtAway(awayGames, game.awayTeamId, awayGames.Count()),
-                awayRecentConcededGoalsAvgAtAway = Cleaner.GetConcededGoalsAvgOfRecentGamesAtAway(awayGames, game.awayTeamId, RECENT_GAMES),
-                awayGoalsAvgAtAway = Cleaner.GetGoalsAvgOfRecentGamesAtAway(awayGames, game.awayTeamId, awayGames.Count()),
-                awayRecentGoalsAvgAtAway = Cleaner.GetGoalsAvgOfRecentGamesAtAway(awayGames, game.awayTeamId, RECENT_GAMES),
-                awayHoursSinceLastGame = Cleaner.GetHoursBetweenLastTwoGames(seasonsGames),
-            };
-            return cleanedGame;
-        }
-
 
         private async Task<bool> CleanedGameExists(Game game)
         {
             return await _gameRepo.GetIfCleanedGameExistsById(game.id);
-        }
-        private async Task<bool> FutureCleanedGameExists(Game game)
-        {
-            return await _gameRepo.GetIfFutureCleanedGameExistsById(game.id);
         }
         private List<Game> GetTeamGames(List<Game> seasonsGames, int teamId, DateTime currentGameDate)
         {

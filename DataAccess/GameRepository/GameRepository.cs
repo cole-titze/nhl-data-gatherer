@@ -13,17 +13,6 @@ namespace DataAccess.GameRepository
             _dbContext = dbContext;
         }
 
-        public async Task AddFutureGames(List<FutureGame> futureGames)
-        {
-            foreach(var futureGame in futureGames)
-            {
-                var game = _dbContext.FutureGame.FirstOrDefault(i => i.id == futureGame.id);
-                if (game == null)
-                    await _dbContext.FutureGame.AddAsync(futureGame);
-            }
-            await _dbContext.SaveChangesAsync();
-        }
-
         public async Task AddGames(List<Game> games)
         {
             await _dbContext.Game.AddRangeAsync(games);
@@ -85,33 +74,9 @@ namespace DataAccess.GameRepository
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<List<FutureGame>> GetFutureGames()
-        {
-            return await _dbContext.FutureGame.ToListAsync();
-        }
-
-        public async Task AddFutureCleanedGames(List<FutureCleanedGame> futureCleanedGames)
-        {
-            foreach (var futureCleanedGame in futureCleanedGames)
-            {
-                var game = _dbContext.FutureCleanedGame.FirstOrDefault(i => i.id == futureCleanedGame.id);
-                if (game == null)
-                    await _dbContext.FutureCleanedGame.AddAsync(futureCleanedGame);
-            }
-            await _dbContext.SaveChangesAsync();
-        }
-
         public async Task<bool> GetIfCleanedGameExistsById(int id)
         {
             var game = await _dbContext.CleanedGame.FirstOrDefaultAsync(i => i.id == id);
-            if (game == null)
-                return false;
-            return true;
-        }
-
-        public async Task<bool> GetIfFutureCleanedGameExistsById(int id)
-        {
-            var game = await _dbContext.FutureCleanedGame.FirstOrDefaultAsync(i => i.id == id);
             if (game == null)
                 return false;
             return true;

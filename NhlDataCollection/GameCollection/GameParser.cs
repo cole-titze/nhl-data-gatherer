@@ -48,6 +48,7 @@ namespace NhlDataCollection.GameCollection
                 winner = (int)GetWinner((int)homeTeam.goals, (int)awayTeam.goals),
                 seasonStartYear = GetSeason((string)message.gameData.game.season),
                 gameDate = DateTime.Parse((string)message.gameData.datetime.dateTime),
+                hasBeenPlayed=true
             };
             return game;
         }
