@@ -10,6 +10,7 @@
         public double vegasAwayOdds { get; set; }
         public double modelHomeOdds { get; set; }
         public double modelAwayOdds { get; set; }
+        public bool hasBeenPlayed { get; set; }
     }
 }
 

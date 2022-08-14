@@ -4,8 +4,8 @@ namespace NhlDataCollection.FutureGameCollection
 {
     public class ScheduleRequestMaker : IScheduleRequestMaker
     {
-        private const string _url = "https://statsapi.web.nhl.com/api/v1/schedule";
-        // Example Request: https://statsapi.web.nhl.com/api/v1/schedule?startDate=2022-04-29&endDate=2022-04-29
+        private const string _url = "https://statsapi.web.nhl.com/api/v1/schedule?gameType=R";
+        // Example Request: https://statsapi.web.nhl.com/api/v1/schedule?gameType=R&startDate=2022-04-29&endDate=2022-04-29
         public async Task<HttpResponseMessage> MakeRequest(string query)
         {
             HttpResponseMessage response;
@@ -24,7 +24,7 @@ namespace NhlDataCollection.FutureGameCollection
         public string CreateRequestQuery(DateTime tomorrow)
         {
             var dateString = $"{tomorrow.Year}-{tomorrow.Month}-{tomorrow.Day}";
-            var query = $"?startDate={dateString}&endDate={dateString}";
+            var query = $"&startDate={dateString}&endDate={dateString}";
 
             return query;
         }

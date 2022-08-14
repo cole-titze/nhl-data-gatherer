@@ -8,6 +8,7 @@
     vegasAwayOdds FLOAT NOT NULL DEFAULT 0,
     modelHomeOdds FLOAT NOT NULL DEFAULT 0,
     modelAwayOdds FLOAT NOT NULL DEFAULT 0,
+    hasBeenPlayed BIT NOT NULL,
     PRIMARY KEY(id),
     FOREIGN KEY (homeTeamId) REFERENCES Team(id),
     FOREIGN KEY (awayTeamId) REFERENCES Team(id)

@@ -4,7 +4,7 @@ namespace Entities
 {
     public static class Mapper
     {
-        public static List<PredictedGame> MapFutureToPredictedGames(List<FutureGame> futureGames)
+        public static List<PredictedGame> MapFutureGameToPredictedGames(List<Game> futureGames)
         {
             var predictedGames = new List<PredictedGame>();
             foreach(var futureGame in futureGames)
@@ -15,6 +15,7 @@ namespace Entities
                     awayTeamId = futureGame.awayTeamId,
                     homeTeamId = futureGame.homeTeamId,
                     gameDate = futureGame.gameDate,
+                    hasBeenPlayed = futureGame.hasBeenPlayed
                 };
                 predictedGames.Add(game);
             }

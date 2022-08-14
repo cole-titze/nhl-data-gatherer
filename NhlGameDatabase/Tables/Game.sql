@@ -24,6 +24,7 @@
     awayTakeaways INT NOT NULL,
     homeGiveaways INT NOT NULL,
     awayGiveaways INT NOT NULL,
+    hasBeenPlayed BIT NOT NULL,
     PRIMARY KEY(id),
     FOREIGN KEY (homeTeamId) REFERENCES Team(id),
     FOREIGN KEY (awayTeamId) REFERENCES Team(id),

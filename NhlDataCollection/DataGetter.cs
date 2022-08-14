@@ -34,6 +34,7 @@ namespace NhlDataCollection
 		}
 		public async Task GetData()
         {
+            List<Game> gameList = new List<Game>();
             for (int year = _yearRange.StartYear; year <= _yearRange.EndYear; year++)
             {
                 var gameCount = await _gameRepo.GetGameCountBySeason(year);
@@ -42,19 +43,20 @@ namespace NhlDataCollection
                 if (gameCount > cutOffCount && year < _yearRange.EndYear)
                     continue;
 
-                var gameList = await GetGamesForSeason(year);
+                gameList = await GetGamesForSeason(year);
                 // Add a years worth of games to db
                 await _gameRepo.AddGames(gameList);
             }
-            var futureGames = await GetFutureGames();
-            await _gameRepo.AddFutureGames(futureGames);
-            var predictedGames = Mapper.MapFutureToPredictedGames(futureGames);
+            gameList = _gameRepo.GetCachedSeasonsGames();
+            List<Game> futureGames = await GetFutureGames();
+            await _gameRepo.AddGames(futureGames);
+            futureGames.AddRange(gameList);
+            var predictedGames = Mapper.MapFutureGameToPredictedGames(futureGames);
             await _gameRepo.AddPredictedGames(predictedGames);
-            //var vegasOdds = await 
         }
-        private async Task<List<FutureGame>> GetFutureGames()
+        private async Task<List<Game>> GetFutureGames()
         {
-            List<FutureGame> gameList = new();
+            List<Game> gameList = new List<Game>();
             var tomorrow = DateTime.Now.AddDays(_daysToAdd);
             var query = _scheduleRequestMaker.CreateRequestQuery(tomorrow);
             var response = await _scheduleRequestMaker.MakeRequest(query);

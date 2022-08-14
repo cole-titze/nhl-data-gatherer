@@ -7,7 +7,6 @@ namespace DataAccess.GameRepository
 		Task AddGames(List<Game> games);
         Task<int> GetGameCountBySeason(int year);
         Task<int> GetCleanedGameCountBySeason(int year);
-        Task AddFutureGames(List<FutureGame> futureGames);
         Task AddPredictedGames(List<PredictedGame> futureGames);
         Task CacheSeasonOfGames(int season);
         Task CacheLastSeasonOfGames(int season);
@@ -15,10 +14,7 @@ namespace DataAccess.GameRepository
         List<Game> GetCachedSeasonsGames();
         List<Game> GetCachedLastSeasonsGames();
         Task AddCleanedGames(List<CleanedGame> games);
-        Task<List<FutureGame>> GetFutureGames();
-        Task AddFutureCleanedGames(List<FutureCleanedGame> futureCleanedGames);
         Task<bool> GetIfCleanedGameExistsById(int id);
-        Task<bool> GetIfFutureCleanedGameExistsById(int id);
     }
 }
 

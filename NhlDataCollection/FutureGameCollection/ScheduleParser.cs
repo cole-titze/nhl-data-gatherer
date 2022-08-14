@@ -6,31 +6,32 @@ namespace NhlDataCollection.FutureGameCollection
     public class ScheduleParser : IScheduleParser
     {
         private const int DefaultGameCount = 1400;
-        public async Task<List<FutureGame>> BuildFutureGames(HttpResponseMessage response)
+        public async Task<List<Game>> BuildFutureGames(HttpResponseMessage response)
         {
             // Get data as Json string 
             string data = await response.Content.ReadAsStringAsync();
             // Add Json string conversion to hard object
             var message = JsonConvert.DeserializeObject<dynamic>(data);
             if (InvalidGame(message))
-                return new List<FutureGame>();
+                return new List<Game>();
 
-            List<FutureGame> games = ParseMessageToGames(message);
+            List<Game> games = ParseMessageToGames(message);
             return games;
         }
-        private List<FutureGame> ParseMessageToGames(dynamic message)
+        private List<Game> ParseMessageToGames(dynamic message)
         {
-            var gameList = new List<FutureGame>();
+            var gameList = new List<Game>();
             foreach (var date in message.dates)
             {
                 foreach (var game in date.games)
                 {
-                    var futureGame = new FutureGame()
+                    var futureGame = new Game()
                     {
                         id = (int)game.gamePk,
                         homeTeamId = (int)game.teams.home.team.id,
                         awayTeamId = (int)game.teams.away.team.id,
                         gameDate = DateTime.Parse((string)game.gameDate),
+                        hasBeenPlayed=false,
                     };
                     gameList.Add(futureGame);
                 }

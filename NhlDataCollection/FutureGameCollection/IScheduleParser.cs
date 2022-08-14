@@ -4,7 +4,7 @@ namespace NhlDataCollection.FutureGameCollection
 {
     public interface IScheduleParser
     {
-        Task<List<FutureGame>> BuildFutureGames(HttpResponseMessage response);
+        Task<List<Game>> BuildFutureGames(HttpResponseMessage response);
         Task<int> GetNumberOfGamesInSeason(HttpResponseMessage response);
     }
 }

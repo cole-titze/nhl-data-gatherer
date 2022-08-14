@@ -49,6 +49,7 @@
     awayHoursSinceLastGame FLOAT NOT NULL,
     winner INT NOT NULL,
     isExcluded BIT NOT NULL,
+    hasBeenPlayed BIT NOT NULL,
     PRIMARY KEY(id),
     FOREIGN KEY (homeTeamId) REFERENCES Team(id),
     FOREIGN KEY (awayTeamId) REFERENCES Team(id),

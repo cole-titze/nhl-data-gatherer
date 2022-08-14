@@ -52,5 +52,6 @@
         public double awayHoursSinceLastGame { get; set; }
         public int winner { get; set; }
         public bool isExcluded { get; set; }
+        public bool hasBeenPlayed { get; set; }
     }
 }
