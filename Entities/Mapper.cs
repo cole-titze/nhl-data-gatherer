@@ -15,7 +15,6 @@ namespace Entities
                     awayTeamId = futureGame.awayTeamId,
                     homeTeamId = futureGame.homeTeamId,
                     gameDate = futureGame.gameDate,
-                    hasBeenPlayed = futureGame.hasBeenPlayed
                 };
                 predictedGames.Add(game);
             }
