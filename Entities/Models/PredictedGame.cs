@@ -14,6 +14,8 @@
         public double pinnacleClosingVegasAwayOdds { get; set; }
         public double betOnlineClosingVegasHomeOdds { get; set; }
         public double betOnlineClosingVegasAwayOdds { get; set; }
+        public double bet365ClosingVegasHomeOdds { get; set; }
+        public double bet365ClosingVegasAwayOdds { get; set; }
         public double bovadaOpeningVegasHomeOdds { get; set; }
         public double bovadaOpeningVegasAwayOdds { get; set; }
         public double myBookieOpeningVegasHomeOdds { get; set; }
