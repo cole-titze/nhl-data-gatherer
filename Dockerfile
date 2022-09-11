@@ -12,5 +12,4 @@ WORKDIR /api
 RUN addgroup -S apigroup && adduser -S apiuser 
 USER apiuser 
 COPY --from=build-env --chown=apiuser:apigroup /api/deploy/LocalRunning .
-EXPOSE 80
 ENTRYPOINT ["./LocalRunning"]
