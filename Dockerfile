@@ -9,7 +9,10 @@ RUN dotnet publish LocalRunning --self-contained -r linux-musl-arm64 -p:PublishS
 # Generate image
 FROM mcr.microsoft.com/dotnet/runtime-deps:6.0-alpine-arm64v8
 WORKDIR /api
-RUN addgroup -S apigroup && adduser -S apiuser 
-USER apiuser 
-COPY --from=build-env --chown=apiuser:apigroup /api/deploy/LocalRunning .
+ENV DOTNET_RUNNING_IN_CONTAINER=true
+RUN apk add --no-cache icu-libs
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+RUN addgroup -S datagroup && adduser -S datauser 
+USER datauser 
+COPY --from=build-env --chown=datauser:datagroup /api/deploy/LocalRunning .
 ENTRYPOINT ["./LocalRunning"]
