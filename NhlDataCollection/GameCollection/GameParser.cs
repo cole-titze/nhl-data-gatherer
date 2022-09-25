@@ -65,10 +65,12 @@ namespace NhlDataCollection.GameCollection
                 return Winner.HOME;
             return Winner.AWAY;
         }
-
+        // If game is not over, null was found, or both faceoffs were 0 the game is invalid
         private bool InvalidGame(dynamic message)
         {
             if(message == null)
+                return true;
+            if (message.gameData.status.detailedState != "Final")
                 return true;
 
             float homeFaceoffs = (float)message.liveData.boxscore.teams.home.teamStats.teamSkaterStats.faceOffWinPercentage;
