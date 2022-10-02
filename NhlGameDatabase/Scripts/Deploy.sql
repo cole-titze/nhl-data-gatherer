@@ -1,5 +1,5 @@
 INSERT INTO Team(id, abbreviation, locationName, teamName, logoUri)
-VALUES(1, 'NJD', 'New Jersey', 'Devils', 'https://nhllogos.blob.core.windows.net/nhl-logos/Avalanche.png'),
+VALUES(1, 'NJD', 'New Jersey', 'Devils', 'https://nhllogos.blob.core.windows.net/nhl-logos/Devils.png'),
 (2, 'NYI', 'New York', 'Islanders', 'https://nhllogos.blob.core.windows.net/nhl-logos/Islanders.png'),
 (3, 'NYR', 'New York', 'Rangers', 'https://nhllogos.blob.core.windows.net/nhl-logos/Rangers.png'),
 (4, 'PHI', 'Philadelphia', 'Flyers', 'https://nhllogos.blob.core.windows.net/nhl-logos/Flyers.png'),
