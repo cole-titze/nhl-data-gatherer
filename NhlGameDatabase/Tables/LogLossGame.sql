@@ -1,4 +1,4 @@
-CREATE TABLE [dbo].[GameLogLoss]
+CREATE TABLE [dbo].[LogLossGame]
 (
     id INT NOT NULL,
     bovadaLogLoss FLOAT NOT NULL DEFAULT 0,
