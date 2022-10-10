@@ -28,6 +28,7 @@ namespace NhlDataCollection.FutureGameCollection
                     var futureGame = new Game()
                     {
                         id = (int)game.gamePk,
+                        seasonStartYear = int.Parse(((string)game.season).Substring(0, 4)),
                         homeTeamId = (int)game.teams.home.team.id,
                         awayTeamId = (int)game.teams.away.team.id,
                         gameDate = DateTime.Parse((string)game.gameDate),

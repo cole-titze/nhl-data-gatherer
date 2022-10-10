@@ -19,7 +19,7 @@ namespace NhlDataCollection
         private const int cutOffCount = 300;
         private readonly DateRange _yearRange;
         private readonly ILogger _logger;
-        private readonly int _daysToAdd = 0;
+        private readonly int _daysToAdd = 7;
 
         public DataGetter(IGameParser gameParser, IScheduleParser scheduleParser, IScheduleRequestMaker scheduleRequestMaker, IGameRequestMaker gameRequestMaker, IPlayerRepository playerRepo, IGameRepository gameRepo, DateRange yearRange, ILogger logger)
 		{
@@ -49,7 +49,7 @@ namespace NhlDataCollection
             }
             gameList = _gameRepo.GetCachedSeasonsGames();
             List<Game> futureGames = await GetFutureGames();
-            await _gameRepo.AddGames(futureGames);
+            await _gameRepo.AddUpdateGames(futureGames);
             futureGames.AddRange(gameList);
             var predictedGames = Mapper.MapFutureGameToPredictedGames(futureGames);
             await _gameRepo.AddPredictedGames(predictedGames);
@@ -58,7 +58,7 @@ namespace NhlDataCollection
         {
             List<Game> gameList = new List<Game>();
             var tomorrow = DateTime.Now.AddDays(_daysToAdd);
-            var query = _scheduleRequestMaker.CreateRequestQuery(tomorrow);
+            var query = _scheduleRequestMaker.CreateRequestQuery(tomorrow, DateTime.Now);
             var response = await _scheduleRequestMaker.MakeRequest(query);
 
             if (response.IsSuccessStatusCode)
