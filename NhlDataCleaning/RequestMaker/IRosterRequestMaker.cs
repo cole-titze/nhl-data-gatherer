@@ -4,7 +4,7 @@ namespace NhlDataCleaning.RequestMaker
 {
 	public interface IRosterRequestMaker
 	{
-		Task<RosterIds> GetPlayerIds(int year);
+		Task<RosterIds> GetPlayerIds(CleanedGame game);
 	}
 }
 

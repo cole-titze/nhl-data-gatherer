@@ -58,7 +58,7 @@ namespace NhlDataCleaning
             for(int i = 0; i < games.Count(); i++)
             {
                 var game = games[i];
-                var ids = await _rosterRequestMaker.GetPlayerIds(game.id);
+                var ids = await _rosterRequestMaker.GetPlayerIds(game);
                 foreach(var id in ids.homeRosterIds)
                 {
                     var position = _playerRepo.GetPositionByIdFromCache(id);

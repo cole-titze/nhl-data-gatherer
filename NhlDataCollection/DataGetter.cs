@@ -77,7 +77,7 @@ namespace NhlDataCollection
 
             for (int id = 0; id < maxGameId; id++)
             {
-                var recordExists = CheckIfRecordExistsInDb(season, id);
+                var recordExists = CheckIfCompleteRecordExistsInDb(season, id);
                 if (recordExists)
                     continue;
 
@@ -94,11 +94,13 @@ namespace NhlDataCollection
             return gameList;
         }
 
-        private bool CheckIfRecordExistsInDb(int year, int id)
+        private bool CheckIfCompleteRecordExistsInDb(int year, int id)
         {
             Game game = _gameRepo.GetCachedGameById(_gameRequestMaker.BuildId(year, id));
 
             if(game.id == -1)
+                return false;
+            if (game.hasBeenPlayed == false)
                 return false;
             return true;
         }
