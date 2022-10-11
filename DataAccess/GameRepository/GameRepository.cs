@@ -18,13 +18,32 @@ namespace DataAccess.GameRepository
             await _dbContext.Game.AddRangeAsync(games);
             await _dbContext.SaveChangesAsync();
         }
+        public async Task AddUpdateGames(List<Game> games)
+        {
+            var addList = new List<Game>();
+            var updateList = new List<Game>();
+            foreach(var game in games)
+            {
+                var dbGame = _dbContext.Game.FirstOrDefault(i => i.id == game.id);
+                if (dbGame == null)
+                    addList.Add(game);
+                else
+                {
+                    dbGame.Clone(game);
+                    updateList.Add(dbGame);
+                }
+            }
+            await _dbContext.Game.AddRangeAsync(addList);
+            _dbContext.Game.UpdateRange(updateList);
+            await _dbContext.SaveChangesAsync();
+        }
 
         public async Task AddPredictedGames(List<PredictedGame> predictedGames)
         {
             foreach(var predictedGame in predictedGames)
             {
                 var game = _dbContext.PredictedGame.FirstOrDefault(i => i.id == predictedGame.id);
-                if(game == null)
+                if (game == null)
                     await _dbContext.PredictedGame.AddAsync(predictedGame);
             }
             await _dbContext.SaveChangesAsync();

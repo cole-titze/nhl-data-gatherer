@@ -42,8 +42,8 @@ namespace DataCollectionTrigger
                 StartYear = 2010,
                 EndYear = GetEndSeason(DateTime.UtcNow),
             };
-            var dataGetter = new DataGetter(gameParser, scheduleParser, scheduleRequestMaker, gameRequestMaker, playerRepo, gameRepo, dateRange, logger);
-            await dataGetter.GetData();
+            //var dataGetter = new DataGetter(gameParser, scheduleParser, scheduleRequestMaker, gameRequestMaker, playerRepo, gameRepo, dateRange, logger);
+            //await dataGetter.GetData();
             logger.LogInformation("Completed Data Collection");
 
             // Run Data Cleaning

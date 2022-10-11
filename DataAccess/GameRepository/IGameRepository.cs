@@ -5,6 +5,7 @@ namespace DataAccess.GameRepository
 	public interface IGameRepository
 	{
 		Task AddGames(List<Game> games);
+        Task AddUpdateGames(List<Game> games);
         Task<int> GetGameCountBySeason(int year);
         Task<int> GetCleanedGameCountBySeason(int year);
         Task AddPredictedGames(List<PredictedGame> futureGames);

@@ -6,32 +6,65 @@ namespace NhlDataCleaning.RequestMaker
 {
     public class RosterRequestMaker : IRosterRequestMaker
     {
-        private const string _url = "http://statsapi.web.nhl.com/api/v1/game/";
-        private const string _query = "/feed/live";
-        public async Task<RosterIds> GetPlayerIds(int gameid)
+        private const string _gameUrl = "http://statsapi.web.nhl.com/api/v1/game/";
+        private const string _teamUrl = "http://statsapi.web.nhl.com/api/v1/teams/";
+        private const string _teamQuery = "?expand=team.roster&season=";
+        private const string _gameQuery = "/feed/live";
+        public async Task<RosterIds> GetPlayerIds(CleanedGame game)
         {
-            var response = await MakeRosterRequest(gameid.ToString() + _query);
-            if (!response.IsSuccessStatusCode)
-                return new RosterIds();
+            RosterIds ids;
+            try
+            {
+                ids = await GamePlayerIdsGetter(game);
+            }
+            catch
+            {
+                ids = await SeasonPlayerIdsGetter(game);
+            }
 
-            var ids = await GetIdsFromResponse(response);
             return ids;
         }
 
-        private async Task<RosterIds> GetIdsFromResponse(HttpResponseMessage response)
+        private async Task<RosterIds> SeasonPlayerIdsGetter(CleanedGame game)
         {
-            // Get data as Json string 
+            var response = await MakeRosterRequest(game.homeTeamId, game.awayTeamId, game.seasonStartYear);
+            var message = await ParseResponse(response);
+            if (!response.IsSuccessStatusCode || !IsValidResponse(message))
+                return new RosterIds();
+            return GetIdsFromSeasonResponse(message);
+        }
+
+        private async Task<RosterIds> GamePlayerIdsGetter(CleanedGame game)
+        {
+            var response = await MakeRosterRequest(game.id.ToString() + _gameQuery);
+            var message = await ParseResponse(response);
+            if (!response.IsSuccessStatusCode || !IsValidResponse(message))
+                throw new Exception("No roster available");
+            return GetIdsFromGameResponse(response);
+        }
+
+        private async Task<dynamic> ParseResponse(HttpResponseMessage response)
+        {
             string data = await response.Content.ReadAsStringAsync();
-            // Add Json string conversion to hard object
-            var message = JsonConvert.DeserializeObject<dynamic>(data);
+            return JsonConvert.DeserializeObject<dynamic>(data) ?? "";
+        }
+
+        private bool IsValidResponse(dynamic message)
+        {
+            if (message.liveData == null && message.teams == null)
+                return false;
+            return true;
+        }
+
+        private RosterIds GetIdsFromGameResponse(dynamic message)
+        {
             if (message == null)
                 return new RosterIds();
 
-            RosterIds ids = ParseMessageToPlayerIds(message);
-            return ids;
+            return ParseGameMessageToPlayerIds(message);
         }
 
-        private RosterIds ParseMessageToPlayerIds(dynamic message)
+        private RosterIds ParseGameMessageToPlayerIds(dynamic message)
         {
             var ids = new RosterIds();
             var homeSkaters = message.liveData.boxscore.teams.home.skaters;
@@ -52,13 +85,36 @@ namespace NhlDataCleaning.RequestMaker
 
             return ids;
         }
+        private RosterIds GetIdsFromSeasonResponse(dynamic message)
+        {
+            if (message == null)
+                return new RosterIds();
+
+            return ParseSeasonMessageToPlayerIds(message);
+        }
+
+        private RosterIds ParseSeasonMessageToPlayerIds(dynamic message)
+        {
+            var ids = new RosterIds();
+            var homeTeam = message.teams[0];
+            var awayTeam = message.teams[1];
+            foreach(var player in homeTeam.roster.roster)
+            {
+                ids.homeRosterIds.Add((int)player.person.id);
+            }
+            foreach (var player in awayTeam.roster.roster)
+            {
+                ids.awayRosterIds.Add((int)player.person.id);
+            }
+            return ids;
+        }
 
         public async Task<HttpResponseMessage> MakeRosterRequest(string query)
         {
             HttpResponseMessage response;
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri(_url);
+                client.BaseAddress = new Uri(_gameUrl);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -67,10 +123,20 @@ namespace NhlDataCleaning.RequestMaker
             }
             return response;
         }
-
-        public Task<List<int>> GetHomePlayerIds(int year)
+        public async Task<HttpResponseMessage> MakeRosterRequest(int homeTeamId, int awayTeamId, int seasonStartYear)
         {
-            throw new NotImplementedException();
+            var query = _teamQuery + seasonStartYear.ToString() + (seasonStartYear + 1).ToString() + "&teamId=" + homeTeamId + "," + awayTeamId;
+            HttpResponseMessage response;
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(_teamUrl);
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                //GET Method
+                response = await client.GetAsync(query);
+            }
+            return response;
         }
     }
 }

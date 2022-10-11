@@ -28,5 +28,5 @@ using (var scope = sp.CreateScope())
     if (gamesConnectionString == null || playersConnectionString == null)
         throw new Exception("Connection String Null");
 
-    await collector.Main(logger, gamesConnectionString, playersConnectionString);
+     await collector.Main(logger, gamesConnectionString, playersConnectionString);
 }

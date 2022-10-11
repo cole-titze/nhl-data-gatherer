@@ -4,8 +4,8 @@ namespace NhlDataCollection.FutureGameCollection
 {
     public class ScheduleRequestMaker : IScheduleRequestMaker
     {
-        private const string _url = "https://statsapi.web.nhl.com/api/v1/schedule?gameType=R";
-        // Example Request: https://statsapi.web.nhl.com/api/v1/schedule?gameType=R&startDate=2022-04-29&endDate=2022-04-29
+        private const string _url = "https://statsapi.web.nhl.com/api/v1/schedule/";
+        // Example Request: https://statsapi.web.nhl.com/api/v1/schedule/?gameType=R&startDate=2022-04-29&endDate=2022-04-29
         public async Task<HttpResponseMessage> MakeRequest(string query)
         {
             HttpResponseMessage response;
@@ -21,10 +21,11 @@ namespace NhlDataCollection.FutureGameCollection
             return response;
         }
 
-        public string CreateRequestQuery(DateTime tomorrow)
+        public string CreateRequestQuery(DateTime futureDate, DateTime today)
         {
-            var dateString = $"{tomorrow.Year}-{tomorrow.Month}-{tomorrow.Day}";
-            var query = $"&startDate={dateString}&endDate={dateString}";
+            var startDateString = $"{today.Year}-{today.Month}-{today.Day}";
+            var endDateString = $"{futureDate.Year}-{futureDate.Month}-{futureDate.Day}";
+            var query = $"?gameType=R&startDate={startDateString}&endDate={endDateString}";
 
             return query;
         }
@@ -32,7 +33,7 @@ namespace NhlDataCollection.FutureGameCollection
         public string CreateRequestQueryToGetTotalGames(int year)
         {
             int nextYear = year + 1;
-            return $"?season={year}{nextYear}&gameType=R";
+            return $"?gameType=R&season={year}{nextYear}";
         }
     }
 }
