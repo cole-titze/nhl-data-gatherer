@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Extensions.Logging;
 using NhlDataCollection.GameCollection;
 using Entities;
 using NhlDataCleaning;
@@ -16,17 +15,10 @@ namespace DataCollectionTrigger
 {
     public class DataCollection
     {
-        [FunctionName("DataCollectionTrigger")]
-        public async Task Run([TimerTrigger("0 0 5 * * *")]TimerInfo myTimer, ILogger logger)
-        {
-            string gamesConnectionString = System.Environment.GetEnvironmentVariable("GamesDatabase", EnvironmentVariableTarget.Process);
-            string playersConnectionString = System.Environment.GetEnvironmentVariable("PlayersDatabase", EnvironmentVariableTarget.Process);
-            await Main(logger, gamesConnectionString, playersConnectionString);
-        }
-        public async Task Main(ILogger logger, string gamesConnectionString, string playersConnectionString)
+        public async Task Main(string gamesConnectionString, string playersConnectionString)
         {
             // Run Data Collection
-            logger.LogInformation("Starting Data Collection");
+            Console.WriteLine("Starting Data Collection");
 
             var gameDbContext = new GameDbContext(gamesConnectionString);
             var playerDbContext = new PlayerDbContext(playersConnectionString);
@@ -42,15 +34,15 @@ namespace DataCollectionTrigger
                 StartYear = 2010,
                 EndYear = GetEndSeason(DateTime.UtcNow),
             };
-            //var dataGetter = new DataGetter(gameParser, scheduleParser, scheduleRequestMaker, gameRequestMaker, playerRepo, gameRepo, dateRange, logger);
-            //await dataGetter.GetData();
-            logger.LogInformation("Completed Data Collection");
+            var dataGetter = new DataGetter(gameParser, scheduleParser, scheduleRequestMaker, gameRequestMaker, playerRepo, gameRepo, dateRange);
+            await dataGetter.GetData();
+            Console.WriteLine("Completed Data Collection");
 
             // Run Data Cleaning
-            logger.LogInformation("Starting Data Cleaning");
-            var dataCleaner = new DataCleaner(logger, playerRepo, gameRepo, rosterRequestMaker, dateRange);
+            Console.WriteLine("Starting Data Cleaning");
+            var dataCleaner = new DataCleaner(playerRepo, gameRepo, rosterRequestMaker, dateRange);
             await dataCleaner.CleanData();
-            logger.LogInformation("Completed Data Cleaning");
+            Console.WriteLine("Completed Data Cleaning");
         }
 
         // Season spans 2 years (2021-2022) but we only want the start year of the season

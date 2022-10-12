@@ -13,15 +13,13 @@ namespace NhlDataCleaning
         private IPlayerRepository _playerRepo;
         private IGameRepository _gameRepo;
         private IRosterRequestMaker _rosterRequestMaker;
-        private readonly ILogger _logger;
         private readonly DateRange _yearRange;
         private const int CUTOFF_COUNT = 300;
         private const int RECENT_GAMES = 5;
         private const int GAMES_TO_EXCLUDE = 15;
 
-        public DataCleaner(ILogger logger, IPlayerRepository playerRepo, IGameRepository gameRepo, IRosterRequestMaker rosterRequestMaker, DateRange dateRange)
+        public DataCleaner(IPlayerRepository playerRepo, IGameRepository gameRepo, IRosterRequestMaker rosterRequestMaker, DateRange dateRange)
         {
-            _logger = logger;
             _yearRange = dateRange;
             _gameRepo = gameRepo;
             _playerRepo = playerRepo;
@@ -40,7 +38,6 @@ namespace NhlDataCleaning
                 if (gameCount > CUTOFF_COUNT && year < _yearRange.EndYear)
                     continue;
 
-                _logger.LogInformation("Cleaning Year: " + year.ToString());
                 await _gameRepo.CacheSeasonOfGames(year);
                 await _gameRepo.CacheLastSeasonOfGames(year - 1);
                 seasonsGames = _gameRepo.GetCachedSeasonsGames();
