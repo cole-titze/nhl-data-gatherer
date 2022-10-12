@@ -2,7 +2,6 @@ using Entities;
 using Entities.Models;
 using DataAccess.GameRepository;
 using DataAccess.PlayerRepository;
-using Microsoft.Extensions.Logging;
 using NhlDataCollection.FutureGameCollection;
 using NhlDataCollection.GameCollection;
 
@@ -18,17 +17,15 @@ namespace NhlDataCollection
         private IPlayerRepository _playerRepo;
         private const int cutOffCount = 300;
         private readonly DateRange _yearRange;
-        private readonly ILogger _logger;
         private readonly int _daysToAdd = 7;
 
-        public DataGetter(IGameParser gameParser, IScheduleParser scheduleParser, IScheduleRequestMaker scheduleRequestMaker, IGameRequestMaker gameRequestMaker, IPlayerRepository playerRepo, IGameRepository gameRepo, DateRange yearRange, ILogger logger)
+        public DataGetter(IGameParser gameParser, IScheduleParser scheduleParser, IScheduleRequestMaker scheduleRequestMaker, IGameRequestMaker gameRequestMaker, IPlayerRepository playerRepo, IGameRepository gameRepo, DateRange yearRange)
 		{
             _gameParser = gameParser;
             _scheduleParser = scheduleParser;
             _gameRequestMaker = gameRequestMaker;
             _scheduleRequestMaker = scheduleRequestMaker;
             _yearRange = yearRange;
-            _logger = logger;
             _playerRepo = playerRepo;
             _gameRepo = gameRepo;
 		}
