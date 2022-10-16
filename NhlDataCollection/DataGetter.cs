@@ -43,13 +43,16 @@ namespace NhlDataCollection
                 gameList = await GetGamesForSeason(year);
                 // Add a years worth of games to db
                 await _gameRepo.AddGames(gameList);
+                // Ensure Games are in Predicted Games database
+                var predictedGames = Mapper.MapFutureGameToPredictedGames(gameList);
+                await _gameRepo.AddPredictedGames(predictedGames);
             }
             gameList = _gameRepo.GetCachedSeasonsGames();
             List<Game> futureGames = await GetFutureGames();
             await _gameRepo.AddUpdateGames(futureGames);
             futureGames.AddRange(gameList);
-            var predictedGames = Mapper.MapFutureGameToPredictedGames(futureGames);
-            await _gameRepo.AddPredictedGames(predictedGames);
+            var predictedFutureGames = Mapper.MapFutureGameToPredictedGames(futureGames);
+            await _gameRepo.AddPredictedGames(predictedFutureGames);
         }
         private async Task<List<Game>> GetFutureGames()
         {
@@ -66,6 +69,7 @@ namespace NhlDataCollection
 
         private async Task<List<Game>> GetGamesForSeason(int season)
         {
+            await _gameRepo.CachePredictedGamesForSeason(season);
             await _gameRepo.CacheSeasonOfGames(season);
             var gameList = new List<Game>();
             var query = _scheduleRequestMaker.CreateRequestQueryToGetTotalGames(season);
