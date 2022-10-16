@@ -7,6 +7,7 @@ namespace DataAccess.GameRepository
 	{
         private List<Game> _cachedSeasonsGames = new List<Game>();
         private List<Game> _cachedLastSeasonsGames = new List<Game>();
+        private List<PredictedGame> _cachedSeasonsPredictedGames = new List<PredictedGame>();
         private readonly GameDbContext _dbContext;
         public GameRepository(GameDbContext dbContext)
         {
@@ -42,13 +43,16 @@ namespace DataAccess.GameRepository
         {
             foreach(var predictedGame in predictedGames)
             {
-                var game = _dbContext.PredictedGame.FirstOrDefault(i => i.id == predictedGame.id);
+                var game = _cachedSeasonsPredictedGames.FirstOrDefault(i => i.id == predictedGame.id);
                 if (game == null)
                     await _dbContext.PredictedGame.AddAsync(predictedGame);
             }
             await _dbContext.SaveChangesAsync();
         }
-
+        public async Task CachePredictedGamesForSeason(int season)
+        {
+            _cachedSeasonsPredictedGames = await _dbContext.PredictedGame.Include(t => t.game).Where(s => s.game.seasonStartYear == season).ToListAsync();
+        }
         public async Task CacheSeasonOfGames(int season)
         {
             _cachedSeasonsGames = await _dbContext.Game.Where(s => s.seasonStartYear == season).ToListAsync();

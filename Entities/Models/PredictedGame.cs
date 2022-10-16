@@ -1,4 +1,6 @@
-﻿namespace Entities.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Entities.Models
 {
 	public class PredictedGame
 	{
@@ -28,6 +30,8 @@
         public double bet365OpeningVegasAwayOdds { get; set; }
         public double modelHomeOdds { get; set; }
         public double modelAwayOdds { get; set; }
+        [ForeignKey("id")]
+        public Game game { get; set; }
     }
 }
 
